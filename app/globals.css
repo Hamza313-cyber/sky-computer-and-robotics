@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050b08;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -12,15 +12,57 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes assemble-left {
+  0% {
+    transform: translateX(-120px) skewY(-12deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0) skewY(-12deg);
+    opacity: 1;
+  }
+}
+
+@keyframes assemble-right {
+  0% {
+    transform: translateX(120px) skewY(12deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0) skewY(12deg);
+    opacity: 1;
+  }
+}
+
+@keyframes assemble-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) rotateX(70deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotateX(70deg);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes brandscroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impressive Set V2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#010603;color:#ccc;font-family:'Share Tech Mono',monospace;padding:30px 18px 70px;}
+h1{font-family:'Orbitron',sans-serif;color:#fff;font-size:1.25rem;letter-spacing:.2em;text-transform:uppercase;}
+.sub{color:rgba(0,255,34,.7);font-size:11px;letter-spacing:.25em;margin:6px 0 30px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:22px;max-width:1300px;margin:0 auto;}
+.card{border:1px solid rgba(0,255,34,.22);border-radius:16px;background:rgba(0,17,4,.3);overflow:hidden;}
+.head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(0,255,34,.15);}
+.name{color:#fff;font-size:12px;letter-spacing:.15em;text-transform:uppercase;}
+.num{color:rgba(0,255,34,.5);font-size:10px;letter-spacing:.2em;}
+.stage{height:340px;position:relative;}
+canvas{display:block;width:100%;height:100%;}
+.use{padding:10px 16px;border-top:1px solid rgba(0,255,34,.12);font-size:10px;letter-spacing:.16em;color:rgba(0,255,34,.55);}
+.hint{position:absolute;bottom:10px;left:14px;font-size:9px;letter-spacing:.2em;color:rgba(0,255,34,.45);pointer-events:none;}
+</style>
+</head>
+<body>
+
+<h1>Improved Set</h1>
+<div class="sub">/// V2 — REAL COASTLINES · CIRCUIT NODES · DENSE TUNNEL</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="head"><span class="name">Particle Earth</span><span class="num">01</span></div>
+    <div class="stage"><canvas id="globe"></canvas><div class="hint">TILTED AXIS · CITY NODES · LIVE ROUTES</div></div>
+    <div class="use">CONTACT / GLOBAL REACH</div>
+  </div>
+
+  <div class="card">
+    <div class="head"><span class="name">Circuit Network</span><span class="num">02</span></div>
+    <div class="stage"><canvas id="net"></canvas><div class="hint">MOUSE MOVE KARO</div></div>
+    <div class="use">AI &amp; EMBEDDED SYSTEMS</div>
+  </div>
+
+  <div class="card">
+    <div class="head"><span class="name">Data Tunnel</span><span class="num">03</span></div>
+    <div class="stage"><canvas id="tunnel"></canvas><div class="hint">HYPERSPEED</div></div>
+    <div class="use">LAPTOPS / HIGH PERFORMANCE</div>
+  </div>
+</div>
+
+<script>
+const G="#00ff22";
+function fit(c){
+  const dpr=Math.min(devicePixelRatio||1,2);
+  const r=c.getBoundingClientRect();
+  c.width=r.width*dpr; c.height=r.height*dpr;
+  const x=c.getContext("2d");
+  x.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:x,w:r.width,h:r.height};
+}
+
+/* ===================== 1. PARTICLE EARTH ===================== */
+(function(){
+  const cv=document.getElementById("globe");
+  let {ctx,w,h}=fit(cv);
+
+  // simplified continent outlines [lon,lat]
+  const LAND=[
+    [[-168,65],[-160,71],[-140,70],[-125,70],[-110,68],[-95,70],[-85,73],[-75,68],[-65,60],[-55,52],[-65,45],[-70,42],[-75,35],[-81,25],[-97,26],[-105,22],[-115,30],[-125,40],[-125,48],[-135,58],[-150,60],[-168,65]],
+    [[-58,60],[-45,60],[-20,70],[-25,82],[-45,83],[-60,76]],
+    [[-81,8],[-75,11],[-60,10],[-50,0],[-35,-5],[-35,-22],[-48,-25],[-58,-35],[-62,-40],[-65,-55],[-72,-52],[-73,-40],[-71,-30],[-70,-18],[-75,-5],[-80,0]],
+    [[-10,36],[-2,43],[3,47],[8,50],[12,54],[20,55],[28,58],[30,65],[25,70],[15,68],[8,62],[0,55],[-5,48],[-9,43]],
+    [[-6,50],[-2,51],[0,54],[-2,58],[-5,58],[-6,54]],
+    [[-17,15],[-17,21],[-10,30],[0,36],[10,37],[20,32],[32,31],[35,22],[43,12],[51,12],[42,-2],[40,-15],[35,-25],[25,-34],[18,-34],[12,-18],[9,-1],[5,5],[-5,5],[-13,9]],
+    [[43,-12],[50,-15],[48,-25],[44,-25]],
+    [[30,40],[45,42],[55,45],[65,45],[75,40],[85,32],[90,28],[95,22],[99,14],[103,10],[108,12],[112,20],[120,23],[122,30],[126,40],[132,46],[140,52],[152,58],[165,62],[178,66],[180,70],[150,75],[120,76],[100,77],[80,75],[60,70],[48,66],[38,62],[30,55],[28,48]],
+    [[68,8],[72,20],[70,26],[78,32],[88,27],[92,22],[88,20],[82,16],[78,9]],
+    [[130,31],[135,34],[140,36],[142,41],[145,44],[141,45],[136,37],[131,33]],
+    [[95,5],[105,0],[115,-5],[130,-5],[140,-8],[135,-2],[125,2],[115,5],[105,6]],
+    [[117,7],[122,7],[126,10],[124,18],[120,18],[117,12]],
+    [[113,-22],[115,-32],[118,-35],[130,-32],[138,-35],[145,-38],[150,-37],[153,-28],[146,-18],[140,-17],[135,-12],[130,-12],[125,-14],[118,-20]],
+    [[166,-46],[170,-46],[174,-41],[178,-37],[175,-36],[170,-43]]
+  ];
+
+  function inPoly(lon,lat,poly){
+    let c=false;
+    for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+      const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
+      if(((yi>lat)!==(yj>lat)) && (lon < (xj-xi)*(lat-yi)/(yj-yi)+xi)) c=!c;
+    }
+    return c;
+  }
+  const isLand=(lat,lon)=>{
+    if(lat<-62) return true;              // antarctica
+    for(const p of LAND) if(inPoly(lon,lat,p)) return true;
+    return false;
+  };
+
+  const pts=[];
+  const N=9000;
+  for(let i=0;i<N;i++){
+    const y=1-(i/(N-1))*2;
+    const rad=Math.sqrt(1-y*y);
+    const th=Math.PI*(3-Math.sqrt(5))*i;
+    const x=Math.cos(th)*rad, z=Math.sin(th)*rad;
+    const lat=Math.asin(y)*180/Math.PI;
+    const lon=Math.atan2(z,x)*180/Math.PI;
+    if(isLand(lat,lon)) pts.push({x,y,z});
+  }
+
+  const CITIES=[
+    [28.6,77.2],[40.7,-74.0],[51.5,-0.12],[35.7,139.7],
+    [-33.9,151.2],[1.35,103.8],[25.2,55.3],[-23.5,-46.6],[37.8,-122.4]
+  ];
+  const toV=(lat,lon)=>{
+    const p=lat*Math.PI/180,l=lon*Math.PI/180;
+    return {x:Math.cos(p)*Math.cos(l),y:Math.sin(p),z:Math.cos(p)*Math.sin(l)};
+  };
+  const cityV=CITIES.map(c=>toV(c[0],c[1]));
+
+  const ROUTES=[[0,2],[0,5],[1,2],[3,4],[6,0],[8,1],[7,2]];
+
+  const TILT=23.5*Math.PI/180;
+  const cosT=Math.cos(TILT), sinT=Math.sin(TILT);
+  const proj=(v,cosR,sinR)=>{
+    let X=v.x*cosR - v.z*sinR;
+    let Z=v.x*sinR + v.z*cosR;
+    let Y=v.y;
+    const X2=X*cosT - Y*sinT;
+    const Y2=X*sinT + Y*cosT;
+    return {x:X2,y:Y2,z:Z};
+  };
+
+  let rot=0,t=0;
+  function draw(){
+    requestAnimationFrame(draw);
+    ctx.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2, R=Math.min(w,h)*0.34;
+    rot+=0.0032; t+=0.01;
+    const cosR=Math.cos(rot), sinR=Math.sin(rot);
+
+    // atmosphere
+    let g=ctx.createRadialGradient(cx,cy,R*0.85,cx,cy,R*1.45);
+    g.addColorStop(0,"rgba(0,255,34,0.22)");
+    g.addColorStop(0.45,"rgba(0,255,34,0.07)");
+    g.addColorStop(1,"rgba(0,255,34,0)");
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,R*1.45,0,7);ctx.fill();
+
+    // ocean disc
+    ctx.fillStyle="rgba(0,40,12,0.35)";
+    ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fill();
+    ctx.strokeStyle="rgba(0,255,34,0.35)";ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();
+
+    // land dots
+    for(const p of pts){
+      const v=proj(p,cosR,sinR);
+      if(v.z<-0.02) continue;
+      const d=(v.z+1)/2;
+      const sx=cx+v.x*R, sy=cy-v.y*R;
+      ctx.fillStyle=`rgba(${60+d*130},255,${90+d*80},${0.12+d*0.8})`;
+      const s=0.6+d*1.4;
+      ctx.fillRect(sx-s/2,sy-s/2,s,s);
+    }
+
+    // routes
+    ROUTES.forEach((r,i)=>{
+      const a=proj(cityV[r[0]],cosR,sinR), b=proj(cityV[r[1]],cosR,sinR);
+      if(a.z<-0.25&&b.z<-0.25) return;
+      const ax=cx+a.x*R, ay=cy-a.y*R, bx=cx+b.x*R, by=cy-b.y*R;
+      const mx=(ax+bx)/2,my=(ay+by)/2;
+      const dx=bx-ax,dy=by-ay,L=Math.hypot(dx,dy)||1;
+      const cxp=mx-dy/L*L*0.4, cyp=my+dx/L*L*0.4;
+      const vis=Math.max(0,Math.min(1,(a.z+b.z)/2+0.6));
+      ctx.strokeStyle=`rgba(0,255,34,${0.30*vis})`;ctx.lineWidth=1.1;
+      ctx.beginPath();ctx.moveTo(ax,ay);ctx.quadraticCurveTo(cxp,cyp,bx,by);ctx.stroke();
+      const tt=((t*0.3+i*0.17)%1), u=1-tt;
+      const px=u*u*ax+2*u*tt*cxp+tt*tt*bx;
+      const py=u*u*ay+2*u*tt*cyp+tt*tt*by;
+      ctx.fillStyle=`rgba(200,255,210,${vis})`;ctx.shadowColor=G;ctx.shadowBlur=12;
+      ctx.beginPath();ctx.arc(px,py,2.4,0,7);ctx.fill();ctx.shadowBlur=0;
+    });
+
+    // city pulses
+    cityV.forEach((c,i)=>{
+      const v=proj(c,cosR,sinR);
+      if(v.z<0) return;
+      const sx=cx+v.x*R, sy=cy-v.y*R;
+      const ph=(t*0.6+i*0.3)%1;
+      ctx.strokeStyle=`rgba(0,255,34,${(1-ph)*0.7})`;ctx.lineWidth=1;
+      ctx.beginPath();ctx.arc(sx,sy,2+ph*11,0,7);ctx.stroke();
+      ctx.fillStyle="rgba(210,255,215,0.95)";ctx.shadowColor=G;ctx.shadowBlur=10;
+      ctx.beginPath();ctx.arc(sx,sy,2.1,0,7);ctx.fill();ctx.shadowBlur=0;
+    });
+  }
+  draw();
+  addEventListener("resize",()=>{({ctx,w,h}=fit(cv));});
+})();
+
+/* ===================== 2. CIRCUIT NETWORK ===================== */
+(function(){
+  const cv=document.getElementById("net");
+  let {ctx,w,h}=fit(cv);
+  let nodes=[],links=[],packets=[];
+
+  function build(){
+    nodes=[];links=[];packets=[];
+    const n=Math.max(16,Math.floor((w*h)/13000));
+    for(let i=0;i<n;i++){
+      nodes.push({
+        x:Math.random()*w, y:Math.random()*h,
+        vx:(Math.random()-.5)*0.22, vy:(Math.random()-.5)*0.22,
+        hx:Math.random()*w, hy:Math.random()*h,
+        size: Math.random()<0.25 ? 6 : 3.4,
+        lit:0
+      });
+    }
+  }
+  build();
+
+  const mouse={x:-999,y:-999};
+  cv.addEventListener("mousemove",e=>{
+    const r=cv.getBoundingClientRect();
+    mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;
+  });
+  cv.addEventListener("mouseleave",()=>{mouse.x=-999;mouse.y=-999;});
+
+  // L-shaped (circuit trace) path between two nodes
+  function tracePath(a,b){
+    const midX=(a.x+b.x)/2;
+    return [[a.x,a.y],[midX,a.y],[midX,b.y],[b.x,b.y]];
+  }
+  function pathPoint(pp,t){
+    const segs=[];let total=0;
+    for(let i=0;i<pp.length-1;i++){
+      const L=Math.hypot(pp[i+1][0]-pp[i][0], pp[i+1][1]-pp[i][1]);
+      segs.push(L);total+=L;
+    }
+    let d=t*total;
+    for(let i=0;i<segs.length;i++){
+      if(d<=segs[i]){
+        const r=segs[i]?d/segs[i]:0;
+        return [pp[i][0]+(pp[i+1][0]-pp[i][0])*r, pp[i][1]+(pp[i+1][1]-pp[i][1])*r];
+      }
+      d-=segs[i];
+    }
+    return pp[pp.length-1];
+  }
+
+  let tick=0;
+  function draw(){
+    requestAnimationFrame(draw);
+    ctx.fillStyle="rgba(1,6,3,0.28)";ctx.fillRect(0,0,w,h);
+    tick++;
+
+    for(const p of nodes){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<6||p.x>w-6)p.vx*=-1;
+      if(p.y<6||p.y>h-6)p.vy*=-1;
+      const d=Math.hypot(p.x-mouse.x,p.y-mouse.y);
+      p.lit = d<120 ? Math.max(p.lit,1-d/120) : p.lit*0.94;
+    }
+
+    // links
+    links=[];
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const d=Math.hypot(nodes[i].x-nodes[j].x,nodes[i].y-nodes[j].y);
+        if(d<130){
+          links.push([i,j,d]);
+          const pp=tracePath(nodes[i],nodes[j]);
+          const alpha=(1-d/130)*0.42 + Math.max(nodes[i].lit,nodes[j].lit)*0.4;
+          ctx.strokeStyle=`rgba(0,255,34,${alpha})`;
+          ctx.lineWidth=1;
+          ctx.beginPath();
+          ctx.moveTo(pp[0][0],pp[0][1]);
+          for(let k=1;k<pp.length;k++) ctx.lineTo(pp[k][0],pp[k][1]);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // spawn packets
+    if(tick%18===0 && links.length){
+      const L=links[Math.floor(Math.random()*links.length)];
+      packets.push({a:L[0],b:L[1],t:0,sp:0.012+Math.random()*0.014});
+    }
+    packets=packets.filter(pk=>{
+      pk.t+=pk.sp;
+      if(pk.t>=1) return false;
+      const A=nodes[pk.a],B=nodes[pk.b];
+      if(!A||!B) return false;
+      const pp=tracePath(A,B);
+      const [px,py]=pathPoint(pp,pk.t);
+      ctx.fillStyle="rgba(215,255,220,1)";
+      ctx.shadowColor=G;ctx.shadowBlur=10;
+      ctx.fillRect(px-2,py-2,4,4);
+      ctx.shadowBlur=0;
+      return true;
+    });
+
+    // nodes as circuit pads
+    for(const p of nodes){
+      const s=p.size+p.lit*2.5;
+      ctx.strokeStyle=`rgba(0,255,34,${0.5+p.lit*0.5})`;
+      ctx.lineWidth=1.2;
+      ctx.strokeRect(p.x-s/2,p.y-s/2,s,s);
+      ctx.fillStyle=p.lit>0.15?`rgba(200,255,210,${0.35+p.lit*0.65})`:"rgba(0,255,34,0.30)";
+      if(p.lit>0.2){ctx.shadowColor=G;ctx.shadowBlur=10;}
+      ctx.fillRect(p.x-s/4,p.y-s/4,s/2,s/2);
+      ctx.shadowBlur=0;
+    }
+  }
+  draw();
+  addEventListener("resize",()=>{({ctx,w,h}=fit(cv));build();});
+})();
+
+/* ===================== 3. DATA TUNNEL ===================== */
+(function(){
+  const cv=document.getElementById("tunnel");
+  let {ctx,w,h}=fit(cv);
+  const CH="01ABCDEF<>{}[]/*+=#$%&ｱｲｳｴｵｶｷｸ";
+  let st=[],rings=[];
+  const mk=()=>({
+    x:(Math.random()-.5)*2.2, y:(Math.random()-.5)*2.2,
+    z:Math.random()*1.7+0.05,
+    pz:0,
+    c:CH.charAt(Math.floor(Math.random()*CH.length))
+  });
+  function build(){
+    st=[];for(let i=0;i<340;i++){const p=mk();p.pz=p.z;st.push(p);}
+    rings=[];for(let i=0;i<14;i++) rings.push({z:(i/14)*1.7+0.05});
+  }
+  build();
+
+  function draw(){
+    requestAnimationFrame(draw);
+    ctx.fillStyle="rgba(1,6,3,0.32)";ctx.fillRect(0,0,w,h);
+    const cx=w/2,cy=h/2,F=Math.min(w,h)*0.95;
+
+    // vanishing point glow
+    let g=ctx.createRadialGradient(cx,cy,0,cx,cy,Math.min(w,h)*0.3);
+    g.addColorStop(0,"rgba(0,255,34,0.16)");
+    g.addColorStop(1,"rgba(0,255,34,0)");
+    ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+
+    // bracket rings
+    for(const r of rings){
+      r.z-=0.0085;
+      if(r.z<0.05) r.z=1.75;
+      const s=F/r.z*0.26;
+      const a=Math.max(0,0.42-r.z*0.2);
+      ctx.strokeStyle=`rgba(0,255,34,${a})`;
+      ctx.lineWidth=1.2;
+      const x1=cx-s,x2=cx+s,y1=cy-s*0.6,y2=cy+s*0.6;
+      const c=s*0.22;
+      ctx.beginPath();
+      ctx.moveTo(x1,y1+c);ctx.lineTo(x1,y1);ctx.lineTo(x1+c,y1);
+      ctx.moveTo(x2-c,y1);ctx.lineTo(x2,y1);ctx.lineTo(x2,y1+c);
+      ctx.moveTo(x2,y2-c);ctx.lineTo(x2,y2);ctx.lineTo(x2-c,y2);
+      ctx.moveTo(x1+c,y2);ctx.lineTo(x1,y2);ctx.lineTo(x1,y2-c);
+      ctx.stroke();
+    }
+
+    ctx.font="14px 'Share Tech Mono', monospace";
+    ctx.textAlign="center";
+    for(const p of st){
+      p.pz=p.z;
+      p.z-=0.017;
+      if(p.z<0.05){Object.assign(p,mk());p.z=1.75;p.pz=1.75;}
+      const s=F/p.z, ps=F/p.pz;
+      const sx=cx+p.x*s*0.40, sy=cy+p.y*s*0.40;
+      const px=cx+p.x*ps*0.40, py=cy+p.y*ps*0.40;
+      if(sx<-40||sx>w+40||sy<-40||sy>h+40) continue;
+      const a=Math.max(0,Math.min(1,(1.75-p.z)/1.25));
+
+      // speed streak
+      if(a>0.35){
+        ctx.strokeStyle=`rgba(0,255,34,${a*0.35})`;
+        ctx.lineWidth=a*1.6;
+        ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(sx,sy);ctx.stroke();
+      }
+      ctx.fillStyle=a>0.75?`rgba(215,255,220,${a})`:`rgba(0,255,34,${a})`;
+      if(a>0.6){ctx.shadowColor=G;ctx.shadowBlur=9;}
+      ctx.fillText(p.c,sx,sy);
+      ctx.shadowBlur=0;
+    }
+  }
+  draw();
+  addEventListener("resize",()=>{({ctx,w,h}=fit(cv));build();});
+})();
+</script>
+</body>
+</html>
