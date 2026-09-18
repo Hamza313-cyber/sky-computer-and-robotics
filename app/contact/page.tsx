@@ -2,6 +2,7 @@
 import { motion } from "motion/react";
 import { useState } from "react";
 import PageShell from "../../PageShell";
+import { createClient } from "@/lib/supabase/client";
 
 const INFO: [string, string][] = [
   ["ADDRESS", "— add store address —"],
@@ -26,6 +27,8 @@ const field =
 
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [loadTime] = useState(() => Date.now());
 
   return (
     <PageShell
@@ -71,35 +74,88 @@ export default function ContactPage() {
           ) : (
             <form
               className="flex flex-col gap-4"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                setSent(true);
+                
+                // 1. Check load time (if < 3s, reject as bot but show success)
+                if (Date.now() - loadTime < 3000) {
+                  setSent(true);
+                  return;
+                }
+
+                // 2. Rate limit (1 per 60s)
+                const lastSubmit = localStorage.getItem('last_enquiry_time');
+                if (lastSubmit && Date.now() - parseInt(lastSubmit) < 60000) {
+                  alert("Please wait a minute before sending another message.");
+                  return;
+                }
+                
+                const formData = new FormData(e.currentTarget);
+                
+                // 3. Honeypot check
+                if (formData.get('website')) {
+                  setSent(true); // Silent success for bots
+                  return;
+                }
+
+                setLoading(true);
+                
+                const data = {
+                  name: formData.get('name'),
+                  email: formData.get('email'),
+                  phone: formData.get('phone'),
+                  subject: formData.get('subject'),
+                  message: formData.get('message'),
+                };
+
+                try {
+                  const res = await fetch("/api/enquiries", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                  });
+                  
+                  if (res.ok) {
+                    localStorage.setItem('last_enquiry_time', Date.now().toString());
+                    setSent(true);
+                  } else {
+                    const result = await res.json();
+                    alert("Failed to send message: " + (result.error || "Unknown error"));
+                  }
+                } catch (err) {
+                  alert("An error occurred while sending the message.");
+                } finally {
+                  setLoading(false);
+                }
               }}
             >
-              <input className={field} placeholder="Your name" required />
-              <input className={field} type="email" placeholder="Email" required />
-              <input className={field} placeholder="Phone" />
-              <select className={field} defaultValue={SUBJECTS[0]}>
+              {/* HONEYPOT */}
+              <div className="absolute opacity-0 -z-50 h-0 overflow-hidden" aria-hidden="true">
+                <label>Leave this empty</label>
+                <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+              </div>
+
+              <input name="name" className={field} placeholder="Your name" required />
+              <input name="email" className={field} type="email" placeholder="Email" required />
+              <input name="phone" className={field} placeholder="Phone" />
+              <select name="subject" className={field} defaultValue={SUBJECTS[0]}>
                 {SUBJECTS.map((s) => (
                   <option key={s} className="bg-black">
                     {s}
                   </option>
                 ))}
               </select>
-              <textarea className={field} rows={5} placeholder="What do you need?" required />
+              <textarea name="message" className={field} rows={5} placeholder="What do you need?" required maxLength={2000} />
 
               <motion.button
                 type="submit"
-                whileHover={{ scale: 1.02, boxShadow: "0 0 35px rgba(0,255,34,0.7)" }}
-                whileTap={{ scale: 0.98 }}
-                className="mt-1 bg-[#00ff22] py-3.5 font-mono text-sm font-black uppercase tracking-[0.18em] text-black shadow-[0_0_22px_rgba(0,255,34,0.4)]"
+                disabled={loading}
+                whileHover={!loading ? { scale: 1.02, boxShadow: "0 0 35px rgba(0,255,34,0.7)" } : undefined}
+                whileTap={!loading ? { scale: 0.98 } : undefined}
+                className="mt-1 bg-[#00ff22] py-3.5 font-mono text-sm font-black uppercase tracking-[0.18em] text-black shadow-[0_0_22px_rgba(0,255,34,0.4)] disabled:opacity-50"
               >
-                Send message →
+                {loading ? "Sending..." : "Send message →"}
               </motion.button>
-
-              <p className="font-mono text-[10px] leading-relaxed tracking-wide text-gray-600">
-                Note: form abhi sirf demo hai — asli email bhejne ke liye backend jodna hoga.
-              </p>
             </form>
           )}
         </motion.div>

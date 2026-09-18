@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,6 +29,9 @@ export default function Navbar({ categories }: { categories: Category[] }) {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
+
+  // Admin panel has its own chrome
+  if (pathname.startsWith("/admin")) return null;
 
   const navLinks = [
     { name: "HOME", href: "/" },

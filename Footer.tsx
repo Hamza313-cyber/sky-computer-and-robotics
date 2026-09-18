@@ -1,4 +1,6 @@
-﻿import Link from "next/link";
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type Category = {
   id: string;
@@ -7,6 +9,9 @@ type Category = {
 };
 
 export default function Footer({ categories }: { categories: Category[] }) {
+  const pathname = usePathname();
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <footer className="border-t border-[#00ff22]/30 bg-[#001104] text-gray-400 font-mono text-xs py-12 relative z-40 mt-20">
       <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-10">
