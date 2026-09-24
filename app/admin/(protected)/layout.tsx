@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin" },
@@ -24,6 +25,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.push("/admin/login");
     router.refresh();
   };
+
+  // Client-side admin check
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const { data: isAdmin, error } = await supabase.rpc("is_admin");
+      if (error || !isAdmin) {
+        await supabase.auth.signOut();
+        router.push("/");
+      }
+    };
+    checkAdmin();
+  }, [supabase, router]);
 
   return (
     <div className="min-h-screen bg-[#010603] text-white flex flex-col md:flex-row">

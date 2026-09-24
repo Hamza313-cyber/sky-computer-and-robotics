@@ -38,10 +38,17 @@ export async function proxy(request: NextRequest) {
     if (!user) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
+    const { data: isAdmin, error } = await supabase.rpc('is_admin');
+    if (error || !isAdmin) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
   }
 
   if (request.nextUrl.pathname === '/admin/login' && user) {
-    return NextResponse.redirect(new URL('/admin', request.url));
+    const { data: isAdmin } = await supabase.rpc('is_admin');
+    if (isAdmin) {
+      return NextResponse.redirect(new URL('/admin', request.url));
+    }
   }
 
   return response;
