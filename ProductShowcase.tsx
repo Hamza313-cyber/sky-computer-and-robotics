@@ -136,7 +136,7 @@ function CategorySection({
           className="mt-8 inline-flex items-center gap-3 border-b-2 border-[#00ff22] pb-2 font-mono text-sm font-bold uppercase tracking-[0.2em] text-[#00ff22]"
         >
           Browse {title}
-          <span>â†’</span>
+          <span>&rarr;</span>
         </motion.a>
       </div>
     </motion.div>

@@ -42,3 +42,7 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# private working notes - never publish (pricing, client terms)
+PROJECT_CONTEXT.md
+hardening.sql

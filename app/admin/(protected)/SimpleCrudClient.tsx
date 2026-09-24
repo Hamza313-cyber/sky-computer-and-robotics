@@ -3,6 +3,13 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+/* Postgres error codes -> plain language for a non-technical user */
+function friendlyError(error: { code?: string; message: string }) {
+  if (error.code === "23505") return "Something with this slug already exists. Use a different slug.";
+  if (error.code === "23503") return "This still has products linked to it. Move or remove them first.";
+  return error.message;
+}
+
 export default function SimpleCrudClient({ table, initialData }: { table: "categories" | "brands", initialData: any[] }) {
   const [items, setItems] = useState(initialData);
   const [editing, setEditing] = useState<any | null>(null);
@@ -20,22 +27,51 @@ export default function SimpleCrudClient({ table, initialData }: { table: "categ
     };
 
     if (editing?.id) {
-      const { error } = await supabase.from(table).update(data).eq("id", editing.id);
-      if (!error) setItems(items.map(i => i.id === editing.id ? { ...i, ...data } : i));
-      else alert(error.message);
+      const { data: rows, error } = await supabase
+        .from(table)
+        .update(data)
+        .eq("id", editing.id)
+        .select("id");
+      if (error) {
+        alert(friendlyError(error));
+        return; // keep the form in edit mode so the next click does not insert a duplicate
+      }
+      if (!rows || rows.length === 0) {
+        alert("Nothing was saved. Your session may have expired \u2014 please log in again.");
+        return;
+      }
+      setItems(items.map((i) => (i.id === editing.id ? { ...i, ...data } : i)));
     } else {
-      const { data: newData, error } = await supabase.from(table).insert([data]).select().single();
-      if (!error && newData) setItems([...items, newData]);
-      else alert(error?.message || "Error");
+      const { data: newData, error } = await supabase
+        .from(table)
+        .insert([data])
+        .select()
+        .single();
+      if (error || !newData) {
+        alert(error ? friendlyError(error) : "Could not save.");
+        return;
+      }
+      setItems([...items, newData]);
     }
     setEditing(null);
   };
 
   const deleteItem = async (id: string) => {
     if (!confirm("Are you sure?")) return;
-    const { error } = await supabase.from(table).delete().eq("id", id);
-    if (!error) setItems(items.filter(i => i.id !== id));
-    else alert(error.message);
+    const { data: rows, error } = await supabase
+      .from(table)
+      .delete()
+      .eq("id", id)
+      .select("id");
+    if (error) {
+      alert(friendlyError(error));
+      return;
+    }
+    if (!rows || rows.length === 0) {
+      alert("Nothing was deleted. Your session may have expired \u2014 please log in again.");
+      return;
+    }
+    setItems(items.filter((i) => i.id !== id));
   };
 
   return (
@@ -72,7 +108,7 @@ export default function SimpleCrudClient({ table, initialData }: { table: "categ
         <h3 className="font-mono text-sm uppercase text-[#00ff22] mb-4 border-b border-[#00ff22]/20 pb-2">
           {editing ? "Edit Item" : "Add New Item"}
         </h3>
-        <form onSubmit={handleSave} className="space-y-4">
+        <form key={editing?.id ?? "new"} onSubmit={handleSave} className="space-y-4">
           <div>
             <label className="mb-1 block font-mono text-[10px] text-gray-400">Name</label>
             <input name="name" defaultValue={editing?.name || ""} required className="w-full bg-black border border-[#00ff22]/20 p-2 text-white outline-none focus:border-[#00ff22]" />

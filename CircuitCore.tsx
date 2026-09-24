@@ -2,7 +2,7 @@
 import { motion } from "motion/react";
 
 const GREEN = "#00ff22";
-const DIM = "#0a5c1c";
+const DIM = "#06d032ff";
 
 function Trace({ d, delay = 0, dur = 3, w = 1.2 }: { d: string; delay?: number; dur?: number; w?: number }) {
   return (

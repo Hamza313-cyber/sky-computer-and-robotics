@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
@@ -19,6 +19,11 @@ export default function ProductsTableClient({
 }) {
   const [products, setProducts] = useState(initialProducts);
   const [search, setSearch] = useState(q);
+
+  /* search / pagination are same-route navigations: the component stays mounted,
+     so useState would keep showing the previous page's rows */
+  useEffect(() => setProducts(initialProducts), [initialProducts]);
+  useEffect(() => setSearch(q), [q]);
   const router = useRouter();
   const supabase = createClient();
 
@@ -28,20 +33,45 @@ export default function ProductsTableClient({
   };
 
   const toggleActive = async (id: string, current: boolean) => {
-    const { error } = await supabase.from("products").update({ is_active: !current }).eq("id", id);
-    if (!error) {
-      setProducts(products.map(p => p.id === id ? { ...p, is_active: !current } : p));
+    const { data, error } = await supabase
+      .from("products")
+      .update({ is_active: !current })
+      .eq("id", id)
+      .select("id");
+    if (error) {
+      alert("Could not update: " + error.message);
+      return;
     }
+    if (!data || data.length === 0) {
+      alert("Nothing was saved. Your session may have expired \u2014 please log in again.");
+      return;
+    }
+    setProducts(products.map(p => (p.id === id ? { ...p, is_active: !current } : p)));
   };
 
   const deleteProduct = async (id: string) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
-    const { error } = await supabase.from("products").delete().eq("id", id);
-    if (!error) {
-      setProducts(products.filter(p => p.id !== id));
-    } else {
-      alert("Error deleting product: " + error.message);
+    const { data, error } = await supabase
+      .from("products")
+      .delete()
+      .eq("id", id)
+      .select("id");
+    if (error) {
+      if (error.code === "23503") {
+        alert(
+          "This product cannot be deleted because it is linked to a customer enquiry. " +
+            "Switch it to inactive instead."
+        );
+      } else {
+        alert("Could not delete: " + error.message);
+      }
+      return;
     }
+    if (!data || data.length === 0) {
+      alert("Nothing was deleted. Your session may have expired \u2014 please log in again.");
+      return;
+    }
+    setProducts(products.filter((p) => p.id !== id));
   };
 
   return (
@@ -131,12 +161,12 @@ export default function ProductsTableClient({
         </div>
         <div className="space-x-4">
           {page > 1 && (
-            <Link href={`/admin/products?page=${page - 1}${q ? `&q=${q}` : ''}`} className="text-[#00ff22] hover:underline">
+            <Link href={`/admin/products?page=${page - 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} className="text-[#00ff22] hover:underline">
               ← Prev
             </Link>
           )}
-          {products.length === 20 && (
-            <Link href={`/admin/products?page=${page + 1}${q ? `&q=${q}` : ''}`} className="text-[#00ff22] hover:underline">
+          {page * 20 < count && (
+            <Link href={`/admin/products?page=${page + 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} className="text-[#00ff22] hover:underline">
               Next →
             </Link>
           )}

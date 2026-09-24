@@ -34,11 +34,58 @@ function toPayload(d: any) {
     price: num(rest.price),
     mrp: num(rest.mrp),
     stock_qty: num(rest.stock_qty, 0),
+    in_stock: num(rest.stock_qty, 0)! > 0,
     warranty_months: num(rest.warranty_months),
     images: Array.isArray(rest.images) ? rest.images : [],
     specs: rest.specs && typeof rest.specs === "object" ? rest.specs : {},
   };
 }
+
+const compressImage = (file: File, maxWidth = 1600, quality = 0.82): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          return resolve(file);
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              return resolve(file);
+            }
+            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".webp"), {
+              type: "image/webp",
+              lastModified: Date.now(),
+            });
+            resolve(compressedFile);
+          },
+          "image/webp",
+          quality
+        );
+      };
+      img.onerror = (error) => reject(error);
+    };
+    reader.onerror = (error) => reject(error);
+  });
+};
 
 export default function ProductFormClient({
   initialData,
@@ -87,18 +134,25 @@ export default function ProductFormClient({
     
     const newImages = [...images];
     for (const file of Array.from(e.target.files)) {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `products/${fileName}`;
-      
-      // Upload to supabase storage 'product-images' bucket
-      const { error, data } = await supabase.storage.from('product-images').upload(filePath, file);
-      
-      if (!error && data) {
-        const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(filePath);
-        newImages.push(publicUrlData.publicUrl);
-      } else {
-        alert("Upload failed: " + (error?.message || "Unknown error"));
+      try {
+        const compressedFile = await compressImage(file);
+        const fileName = `${Math.random()}.webp`;
+        const filePath = `products/${fileName}`;
+        
+        // Upload to supabase storage 'product-images' bucket
+        const { error, data } = await supabase.storage.from('product-images').upload(filePath, compressedFile, {
+          contentType: 'image/webp'
+        });
+        
+        if (!error && data) {
+          const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(filePath);
+          newImages.push(publicUrlData.publicUrl);
+        } else {
+          alert("Upload failed: " + (error?.message || "Unknown error"));
+        }
+      } catch (err) {
+        console.error("Compression/Upload error:", err);
+        alert("Failed to process image.");
       }
     }
     
@@ -209,9 +263,6 @@ export default function ProductFormClient({
               <input type="checkbox" {...register("is_active")} className="accent-[#00ff22]" /> Active
             </label>
             <label className="flex items-center gap-2 font-mono text-[10px] uppercase text-white">
-              <input type="checkbox" {...register("in_stock")} className="accent-[#00ff22]" /> In Stock
-            </label>
-            <label className="flex items-center gap-2 font-mono text-[10px] uppercase text-white">
               <input type="checkbox" {...register("is_featured")} className="accent-[#00ff22]" /> Featured
             </label>
           </div>
@@ -258,7 +309,7 @@ export default function ProductFormClient({
           </h2>
           <div>
             <input type="file" multiple accept="image/*" onChange={handleImageUpload} disabled={uploading} className="mb-4 text-xs text-gray-400" />
-            {uploading && <div className="text-xs text-[#00ff22]">Uploading...</div>}
+            {uploading && <div className="text-xs text-[#00ff22]">Compressing...</div>}
           </div>
           <div className="flex flex-wrap gap-2">
             {images.map((url: string, idx: number) => (

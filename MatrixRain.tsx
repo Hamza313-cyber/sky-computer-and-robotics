@@ -11,7 +11,7 @@ export default function MatrixRain({ intensity = 0.85 }: { intensity?: number })
     if (!ctx) return;
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const chars = "?????????????????????????????????????????????0123456789<>[]{}/*+-=$#@%&";
+    const chars = "ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶヷヸヹ0123456789<>[]{}/*+-=$#@%&";
     const fontSize = 16;
     let cols = 0;
     let drops: number[] = [];

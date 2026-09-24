@@ -9,11 +9,21 @@ export default function EnquiriesClient({ initialEnquiries }: { initialEnquiries
   const supabase = createClient();
 
   const updateStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from("enquiries").update({ status }).eq("id", id);
-    if (!error) {
-      setEnquiries(enquiries.map(e => e.id === id ? { ...e, status } : e));
-      if (selected?.id === id) setSelected({ ...selected, status });
+    const { data, error } = await supabase
+      .from("enquiries")
+      .update({ status })
+      .eq("id", id)
+      .select("id");
+    if (error) {
+      alert("Could not update: " + error.message);
+      return;
     }
+    if (!data || data.length === 0) {
+      alert("Nothing was saved. Your session may have expired \u2014 please log in again.");
+      return;
+    }
+    setEnquiries(enquiries.map((e) => (e.id === id ? { ...e, status } : e)));
+    if (selected?.id === id) setSelected({ ...selected, status });
   };
 
   return (

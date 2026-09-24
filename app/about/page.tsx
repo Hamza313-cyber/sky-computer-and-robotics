@@ -22,10 +22,10 @@ const STORY = [
 ];
 
 const STATS = [
-  ["10K+", "Customers served"],
-  ["500+", "Products in stock"],
-  ["1,240", "CCTV setups done"],
-  ["24/7", "Support reachable"],
+  ["100%", "Genuine products"],
+  ["Top brands", "Under one roof"],
+  ["Free", "Setup & data transfer"],
+  ["In-house", "Service desk"],
 ];
 
 export default function AboutPage() {

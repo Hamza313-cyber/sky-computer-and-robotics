@@ -21,9 +21,29 @@ export default function Footer({ categories }: { categories: Category[] }) {
           <Link href="/" className="text-white font-black text-2xl tracking-widest">
             SKY<span className="text-[#00ff22]">.</span>
           </Link>
-          <p className="leading-relaxed text-[11px] max-w-sm">
+          <p className="leading-relaxed text-[12px] max-w-sm">
             Your trusted retail tech store. We provide top-tier laptops, mobiles, CCTV security systems, and high-quality gadgets.
           </p>
+
+          <div className="mt-1 flex flex-col gap-1.5 text-[12px]">
+            <a href="tel:+917001904082" className="hover:text-[#00ff22] transition-colors">
+              +91 70019 04082
+            </a>
+            <a
+              href="https://wa.me/917001904082"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#00ff22] transition-colors"
+            >
+              WhatsApp
+            </a>
+            <a
+              href="mailto:skycomputerrobotics@gmail.com"
+              className="break-all hover:text-[#00ff22] transition-colors"
+            >
+              skycomputerrobotics@gmail.com
+            </a>
+          </div>
         </div>
 
         {/* QUICK LINKS */}
@@ -51,7 +71,7 @@ export default function Footer({ categories }: { categories: Category[] }) {
 
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-12 pt-6 border-t border-gray-800 flex justify-between items-center text-[10px]">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-12 pt-6 border-t border-gray-800 flex flex-wrap gap-2 justify-between items-center text-[11px]">
         <p>© {new Date().getFullYear()} Sky Computers & Robotics. All rights reserved.</p>
         <p className="text-[#00ff22]/50 tracking-widest">SYSTEM // ONLINE</p>
       </div>

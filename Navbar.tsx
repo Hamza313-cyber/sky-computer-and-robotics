@@ -100,6 +100,14 @@ export default function Navbar({ categories }: { categories: Category[] }) {
               )}
             </div>
           ))}
+          <form action="/search" method="GET" className="relative flex items-center">
+            <input
+              type="text"
+              name="q"
+              placeholder="Search..."
+              className="bg-black/50 border border-[#00ff22]/30 rounded-full px-4 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff22] font-mono"
+            />
+          </form>
         </nav>
 
         {/* MOBILE TOGGLE */}
@@ -120,6 +128,14 @@ export default function Navbar({ categories }: { categories: Category[] }) {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40 bg-[#010603]/98 backdrop-blur-xl flex flex-col items-center justify-center gap-8"
           >
+            <form action="/search" method="GET" className="w-64 mb-4" onSubmit={() => setMobileMenuOpen(false)}>
+              <input
+                type="text"
+                name="q"
+                placeholder="Search..."
+                className="w-full bg-black/50 border border-[#00ff22]/30 rounded-full px-6 py-3 text-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff22] text-center font-mono"
+              />
+            </form>
             {navLinks.map((link) => (
               <Link
                 key={link.name}

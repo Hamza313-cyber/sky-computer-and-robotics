@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -72,7 +72,7 @@ export default function CategoryView({ c, products, page, total }: { c: any, pro
                   {p.short_description}
                 </div>
                 <div className="mt-4 font-mono text-xs text-[#00ff22]">
-                  Rs. {p.price.toLocaleString("en-IN")}
+                  {p.price != null ? `Rs. ${p.price.toLocaleString("en-IN")}` : "Price on request"}
                 </div>
               </motion.div>
             </Link>

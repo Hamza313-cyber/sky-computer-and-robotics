@@ -153,7 +153,7 @@ export default function ProductClient({ product }: { product: any }) {
           {/* CTA */}
           <div className="mt-auto">
             <Link
-              href={`/contact?subject=Enquiry for ${product.name}`}
+              href={`/contact?subject=Enquiry for ${product.name}&product_id=${product.id}`}
               className="inline-flex w-full items-center justify-center gap-3 bg-[#00ff22] py-4 font-mono text-sm font-black uppercase tracking-[0.2em] text-black shadow-[0_0_20px_rgba(0,255,34,0.3)] transition-all hover:shadow-[0_0_35px_rgba(0,255,34,0.7)]"
             >
               Enquire about this <span className="text-lg leading-none">&rarr;</span>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { motion, type Variants } from "motion/react";
 import { useState } from "react";
 import { MiniBot } from "../CircuitCore";
@@ -92,12 +92,13 @@ export default function CyberHero() {
                 />
               </div>
               <div className="text-[11px] font-normal leading-relaxed text-gray-300">
-                Established tech house building custom PCs, robotics kits and AI systems.
+                Retail tech store \u2014 laptops, mobiles, CCTV security systems and gadgets.
+                Genuine stock, expert setup, service you can walk into.
               </div>
               <div className="mt-3 flex flex-col gap-1 text-[10px]">
-                <div className="flex justify-between text-gray-500"><span>UPTIME</span><span className="text-[#00ff88]">99.9%</span></div>
-                <div className="flex justify-between text-gray-500"><span>UNITS_DEPLOYED</span><span className="text-[#00ff88]">10,000+</span></div>
-                <div className="flex justify-between text-gray-500"><span>STATUS</span><span className="text-[#00ff88]">ONLINE</span></div>
+                <div className="flex justify-between text-gray-500"><span>LAPTOPS</span><span className="text-[#00ff88]">IN STOCK</span></div>
+                <div className="flex justify-between text-gray-500"><span>MOBILES</span><span className="text-[#00ff88]">IN STOCK</span></div>
+                <div className="flex justify-between text-gray-500"><span>CCTV</span><span className="text-[#00ff88]">INSTALLED</span></div>
               </div>
             </motion.div>
           </motion.div>
@@ -180,13 +181,13 @@ export default function CyberHero() {
 
                 <div>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-gray-500 tracking-wider">LOAD</span>
-                    <span className="text-[#00ff22]">68%</span>
+                    <span className="text-gray-500 tracking-wider">GENUINE STOCK</span>
+                    <span className="text-[#00ff22]">100%</span>
                   </div>
                   <div className="w-full h-1 rounded-full bg-[#00ff22]/10 overflow-hidden">
                     <motion.div
                       className="h-full rounded-full bg-[#00ff22]"
-                      animate={{ width: ["45%", "72%", "58%", "68%"] }}
+                      animate={{ width: ["45%", "72%", "58%", "100%"] }}
                       transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                       style={{ boxShadow: "0 0 6px #00ff22" }}
                     />
@@ -194,20 +195,20 @@ export default function CyberHero() {
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-500 tracking-wider">UPTIME</span>
-                  <span className="text-[#00ff22]">99.9%</span>
+                  <span className="text-gray-500 tracking-wider">WARRANTY</span>
+                  <span className="text-[#00ff22]">ON EVERY ITEM</span>
                 </div>
 
                 <div className="flex justify-between items-center pt-2 border-t border-[#00ff22]/15">
-                  <span className="text-gray-500 tracking-wider">NODE</span>
-                  <span className="text-[#00ff22]/70">RX-09</span>
+                  <span className="text-gray-500 tracking-wider">SETUP</span>
+                  <span className="text-[#00ff22]/70">INCLUDED</span>
                 </div>
               </div>
             </div>
           </motion.div>
 
           <motion.div variants={fromRight} className="grid grid-cols-2 gap-3">
-            {[["10K+", "Customers"], ["500+", "Products"], ["AI", "Driven"], ["24/7", "Support"]].map(([n, l], i) => (
+            {[["100%", "Genuine"], ["Top", "Brands"], ["Free", "Setup"], ["In-house", "Service"]].map(([n, l], i) => (
               <motion.div
                 key={i}
                 whileHover={{ scale: 1.06 }}
