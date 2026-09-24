@@ -1,7 +1,6 @@
 "use client";
 import { motion } from "motion/react";
 import Link from "next/link";
-import MatrixRain from "../../../MatrixRain";
 
 export default function BrandView({ brand, products, page, total }: { brand: any, products: any[], page: number, total: number }) {
   const totalPages = Math.ceil(total / 24);
@@ -13,8 +12,6 @@ export default function BrandView({ brand, products, page, total }: { brand: any
 
   return (
     <section className="relative isolate min-h-screen overflow-hidden bg-[#010603] pb-24 pt-28">
-      <MatrixRain intensity={0.55} />
-
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#001a08_1px,transparent_1px),linear-gradient(to_bottom,#001a08_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-40" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,transparent_10%,#000_80%)]" />
 

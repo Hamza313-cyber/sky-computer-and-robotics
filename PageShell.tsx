@@ -2,7 +2,6 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import MatrixRain from "./MatrixRain";
 
 /* Shared page wrapper: matrix rain, grid, eyebrow + glitch heading, back link */
 export default function PageShell({
@@ -24,8 +23,6 @@ export default function PageShell({
 }) {
   return (
     <section className="relative isolate min-h-screen overflow-hidden bg-[#010603] pb-28 pt-24">
-      <MatrixRain intensity={0.5} />
-
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#001a08_1px,transparent_1px),linear-gradient(to_bottom,#001a08_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-40" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,transparent_8%,#000_82%)]" />
 

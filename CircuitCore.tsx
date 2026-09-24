@@ -164,34 +164,3 @@ export default function CircuitCore() {
     </div>
   );
 }
-export function MiniBot() {
-  return (
-    <div className="relative w-full h-32 rounded-lg overflow-hidden border border-[#00ff22]/25">
-      <video
-        src="/robot-loop.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="w-full h-full object-cover"
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-25"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg, rgba(0,255,34,0.5) 0px, rgba(0,255,34,0.5) 1px, transparent 1px, transparent 4px)",
-        }}
-      />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#010603] via-transparent to-transparent" />
-      <motion.div
-        className="pointer-events-none absolute left-0 right-0 h-8"
-        style={{ background: "linear-gradient(to bottom, transparent, rgba(0,255,34,0.25), transparent)" }}
-        animate={{ top: ["-20%", "120%"] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
-      />
-      <div className="pointer-events-none absolute bottom-1.5 left-2 text-[8px] font-mono text-[#00ff22]/80 tracking-widest">
-        LIVE_FEED // RX-09
-      </div>
-    </div>
-  );
-}

@@ -1,8 +1,6 @@
 "use client";
 import { motion, type Variants } from "motion/react";
 import { useState } from "react";
-import { MiniBot } from "../CircuitCore";
-import MatrixRain from "../MatrixRain";
 import DancingTitle from "../DancingTitle";
 
 const container: Variants = {
@@ -34,8 +32,6 @@ export default function CyberHero() {
   return (
     <>
     <section className="relative isolate min-h-screen bg-[#010603] overflow-hidden flex items-center">
-      <MatrixRain intensity={1} />
-
       <div
         className="pointer-events-none absolute inset-0 z-30 opacity-[0.15]"
         style={{
@@ -112,43 +108,6 @@ export default function CyberHero() {
           </motion.p>
         </div>
 
-        {/* CENTER â€” CIRCUIT CORE */}
-        <motion.div
-          variants={fromBottom}
-          className="lg:col-span-4 relative flex items-center justify-center h-[560px]"
-          
-          
-        >
-
-
-
-
-          {/* CIRCUIT CORE + LASER */}
-          <div className="relative z-10 w-full max-w-[540px] h-[500px] rounded-2xl overflow-hidden border border-[#00ff22]/30 shadow-[0_0_50px_rgba(0,255,34,0.2)]">
-            <video
-              src="/hero-circuit.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              className="w-full h-full object-cover"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-[#00ff22]/25 mix-blend-color" />
-            <div
-              className="pointer-events-none absolute inset-0 opacity-20"
-              style={{
-                backgroundImage:
-                  "repeating-linear-gradient(0deg, rgba(0,255,34,0.5) 0px, rgba(0,255,34,0.5) 1px, transparent 1px, transparent 4px)",
-              }}
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#010603] via-transparent to-transparent" />
-            <div className="pointer-events-none absolute bottom-3 left-4 text-[9px] font-mono text-[#00ff22]/70 tracking-widest">
-              CORE_SYSTEM // ONLINE
-            </div>
-          </div>
-        </motion.div>
-
         {/* RIGHT */}
         <motion.div variants={container} className="lg:col-span-3 flex flex-col gap-5">
           <motion.div
@@ -159,9 +118,6 @@ export default function CyberHero() {
             <h3 className="text-white font-bold tracking-widest mb-4 text-sm uppercase">
               Next Gen <br /><span className="text-[#00ff22]">Technology</span>
             </h3>
-            <div className="w-full border border-[#00ff22]/20 bg-[#001a08]/60 rounded-lg mb-4 overflow-hidden">
-              <MiniBot />
-            </div>
             <div className="mt-4 rounded-xl border border-[#00ff22]/25 bg-black/40 p-3">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[10px] font-mono tracking-[0.2em] text-[#00ff22]">SYSTEM STATUS</span>
