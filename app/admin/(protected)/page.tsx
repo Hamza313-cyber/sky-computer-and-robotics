@@ -6,7 +6,7 @@ export default async function AdminDashboard() {
   const supabase = await createClient();
 
   // Basic stats
-  const { count: totalProducts } = await supabase.from("products").select("*", { count: "exact", head: true });
+  const { count: totalProducts, error: dbError } = await supabase.from("products").select("*", { count: "exact", head: true });
   const { count: activeProducts } = await supabase.from("products").select("*", { count: "exact", head: true }).eq("is_active", true);
   const { count: outOfStock } = await supabase.from("products").select("*", { count: "exact", head: true }).eq("in_stock", false);
   
@@ -24,6 +24,15 @@ export default async function AdminDashboard() {
     .from("page_views")
     .select("*", { count: "exact", head: true })
     .gte("created_at", startOfMonth.toISOString());
+
+  // Real health checks (previously hardcoded "OK")
+  const { error: storageError } = await supabase.storage.from("product-images").list("", { limit: 1 });
+  const { data: { user } } = await supabase.auth.getUser();
+  const status = [
+    { label: "DB Connection", ok: !dbError },
+    { label: "Storage Bucket", ok: !storageError },
+    { label: "Auth Module", ok: !!user },
+  ];
 
   return (
     <div>
@@ -44,9 +53,12 @@ export default async function AdminDashboard() {
           System Status
         </h2>
         <div className="font-mono text-xs text-gray-400 leading-relaxed">
-          <p>&gt; DB Connection: OK</p>
-          <p>&gt; Storage Bucket: OK</p>
-          <p>&gt; Auth Module: OK</p>
+          {status.map((s) => (
+            <p key={s.label}>
+              &gt; {s.label}:{" "}
+              <span className={s.ok ? "text-[#00ff22]" : "text-red-400"}>{s.ok ? "OK" : "FAIL"}</span>
+            </p>
+          ))}
         </div>
       </div>
     </div>

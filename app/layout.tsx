@@ -1,9 +1,10 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { createClient } from "@/lib/supabase/public";
+import PageViewTracker from "./components/PageViewTracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#010603] text-white overflow-x-hidden">
+        <PageViewTracker />
         <Navbar categories={categories || []} />
         <main className="flex-1">{children}</main>
         <Footer categories={categories || []} />
