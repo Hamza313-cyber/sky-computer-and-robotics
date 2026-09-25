@@ -42,7 +42,7 @@ function Dance({
   );
 }
 
-/* One line of white text with mint + cyan chromatic split behind it */
+/* One line of neon-green text with mint + cyan chromatic split behind it */
 function Line({
   text,
   hovered,
@@ -55,7 +55,7 @@ function Line({
   className?: string;
 }) {
   return (
-    <span className={`relative inline-block text-white ${className}`}>
+    <span className={`relative inline-block text-[#00ff22] ${className}`}>
       <Dance text={text} hovered={hovered} delayBase={delayBase} />
 
       <motion.span
@@ -91,7 +91,7 @@ export default function DancingTitle() {
       className="relative w-fit cursor-pointer text-5xl font-black uppercase leading-[0.95] md:text-7xl"
       style={{
         textShadow:
-          "0 3px 18px rgba(0,0,0,0.95), 0 0 34px rgba(0,255,136,0.30), 0 0 70px rgba(0,0,0,0.85)",
+          "0 0 10px rgba(0,255,34,0.65), 0 0 36px rgba(0,255,34,0.40), 0 3px 18px rgba(0,0,0,0.9)",
       }}
     >
       <Line text="SKY" hovered={hov} />

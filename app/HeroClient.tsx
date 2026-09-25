@@ -1,6 +1,6 @@
 "use client";
 import { motion, type Variants } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DancingTitle from "../DancingTitle";
 
 const container: Variants = {
@@ -23,6 +23,36 @@ const fromBottom: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
 };
 
+/* Background video: poster first (fast LCP), video starts after page load.
+   Skipped on Save-Data and reduced-motion. Source: Pexels #35977437 (free license), recoloured green, 5s loop. */
+function HeroVideoBackground() {
+  const [play, setPlay] = useState(false);
+  useEffect(() => {
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (saveData || reduce) return;
+    const start = () => setPlay(true);
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
+    return () => window.removeEventListener("load", start);
+  }, []);
+
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/videos/hero-circuit-poster.webp" alt="" fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" />
+      {play && (
+        <video autoPlay muted loop playsInline preload="none" poster="/videos/hero-circuit-poster.webp"
+          className="absolute inset-0 h-full w-full object-cover">
+          <source src="/videos/hero-circuit.webm" type="video/webm" />
+          <source src="/videos/hero-circuit.mp4" type="video/mp4" />
+        </video>
+      )}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/15 to-transparent" />
+    </div>
+  );
+}
+
 export default function CyberHero() {
 
   const [titleHover, setTitleHover] = useState(false);
@@ -32,6 +62,7 @@ export default function CyberHero() {
   return (
     <>
     <section className="relative isolate min-h-screen bg-[#010603] overflow-hidden flex items-center">
+      <HeroVideoBackground />
       <div
         className="pointer-events-none absolute inset-0 z-30 opacity-[0.15]"
         style={{
@@ -47,15 +78,15 @@ export default function CyberHero() {
         transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
       />
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#001a08_1px,transparent_1px),linear-gradient(to_bottom,#001a08_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-60" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_5%,#000_85%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#001a08_1px,transparent_1px),linear-gradient(to_bottom,#001a08_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-25" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(0,0,0,0.75)_100%)]" />
 
 
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="relative z-40 max-w-[1600px] mx-auto w-full px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center"
+        className="relative z-40 max-w-[1600px] mx-auto w-full px-6 md:px-12 pt-28 pb-12 grid grid-cols-1 lg:grid-cols-12 gap-x-10 gap-y-8 items-center"
       >
 
         {/* LEFT */}
@@ -87,14 +118,14 @@ export default function CyberHero() {
                   transition={{ duration: 1.2, repeat: Infinity }}
                 />
               </div>
-              <div className="text-[11px] font-normal leading-relaxed text-gray-300">
+              <div className="text-[11px] font-normal leading-relaxed text-[#b8ffc8]">
                 Retail tech store \u2014 laptops, mobiles, CCTV security systems and gadgets.
                 Genuine stock, expert setup, service you can walk into.
               </div>
               <div className="mt-3 flex flex-col gap-1 text-[10px]">
-                <div className="flex justify-between text-gray-500"><span>LAPTOPS</span><span className="text-[#00ff88]">IN STOCK</span></div>
-                <div className="flex justify-between text-gray-500"><span>MOBILES</span><span className="text-[#00ff88]">IN STOCK</span></div>
-                <div className="flex justify-between text-gray-500"><span>CCTV</span><span className="text-[#00ff88]">INSTALLED</span></div>
+                <div className="flex justify-between text-[#00ff22]/60"><span>LAPTOPS</span><span className="text-[#00ff88]">IN STOCK</span></div>
+                <div className="flex justify-between text-[#00ff22]/60"><span>MOBILES</span><span className="text-[#00ff88]">IN STOCK</span></div>
+                <div className="flex justify-between text-[#00ff22]/60"><span>CCTV</span><span className="text-[#00ff88]">INSTALLED</span></div>
               </div>
             </motion.div>
           </motion.div>
@@ -103,19 +134,19 @@ export default function CyberHero() {
             Powering a smarter tomorrow
           </motion.p>
 
-          <motion.p variants={fromLeft} className="text-gray-300 max-w-sm leading-relaxed">
+          <motion.p variants={fromLeft} className="text-[#b8ffc8] max-w-sm leading-relaxed">
             High performance systems. Intelligent robotics. Real world solutions. All under one sky.
           </motion.p>
         </div>
 
-        {/* RIGHT */}
-        <motion.div variants={container} className="lg:col-span-3 flex flex-col gap-5">
+        {/* BOTTOM-LEFT: status panel + stat tiles */}
+        <motion.div variants={container} className="lg:col-span-7 lg:col-start-1 flex flex-col sm:flex-row sm:items-stretch gap-5">
           <motion.div
-            variants={fromRight}
+            variants={fromBottom}
             whileHover={{ borderColor: "#00ff22", boxShadow: "0 0 30px rgba(0,255,34,0.25)" }}
-            className="border border-[#00ff22]/30 bg-[#001104]/80 backdrop-blur-md rounded-xl p-5"
+            className="sm:w-72 shrink-0 border border-[#00ff22]/30 bg-[#001104]/80 backdrop-blur-md rounded-xl p-5"
           >
-            <h3 className="text-white font-bold tracking-widest mb-4 text-sm uppercase">
+            <h3 className="text-[#7dff95] font-bold tracking-widest mb-4 text-sm uppercase">
               Next Gen <br /><span className="text-[#00ff22]">Technology</span>
             </h3>
             <div className="mt-4 rounded-xl border border-[#00ff22]/25 bg-black/40 p-3">
@@ -131,13 +162,13 @@ export default function CyberHero() {
 
               <div className="flex flex-col gap-2.5 font-mono text-[10px]">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-500 tracking-wider">CORE</span>
+                  <span className="text-[#00ff22]/60 tracking-wider">CORE</span>
                   <span className="text-[#00ff22]">ONLINE</span>
                 </div>
 
                 <div>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-gray-500 tracking-wider">GENUINE STOCK</span>
+                    <span className="text-[#00ff22]/60 tracking-wider">GENUINE STOCK</span>
                     <span className="text-[#00ff22]">100%</span>
                   </div>
                   <div className="w-full h-1 rounded-full bg-[#00ff22]/10 overflow-hidden">
@@ -151,19 +182,19 @@ export default function CyberHero() {
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-500 tracking-wider">WARRANTY</span>
+                  <span className="text-[#00ff22]/60 tracking-wider">WARRANTY</span>
                   <span className="text-[#00ff22]">ON EVERY ITEM</span>
                 </div>
 
                 <div className="flex justify-between items-center pt-2 border-t border-[#00ff22]/15">
-                  <span className="text-gray-500 tracking-wider">SETUP</span>
+                  <span className="text-[#00ff22]/60 tracking-wider">SETUP</span>
                   <span className="text-[#00ff22]/70">INCLUDED</span>
                 </div>
               </div>
             </div>
           </motion.div>
 
-          <motion.div variants={fromRight} className="grid grid-cols-2 gap-3">
+          <motion.div variants={fromBottom} className="sm:w-72 shrink-0 grid grid-cols-2 gap-3 content-stretch">
             {[["100%", "Genuine"], ["Top", "Brands"], ["Free", "Setup"], ["In-house", "Service"]].map(([n, l], i) => (
               <motion.div
                 key={i}
@@ -171,7 +202,7 @@ export default function CyberHero() {
                 className="border border-[#00ff22]/25 bg-black/50 rounded-lg p-3 text-center"
               >
                 <div className="text-[#00ff22] font-black text-lg">{n}</div>
-                <div className="text-gray-500 text-[10px] font-mono uppercase tracking-wider">{l}</div>
+                <div className="text-[#00ff22]/60 text-[10px] font-mono uppercase tracking-wider">{l}</div>
               </motion.div>
             ))}
           </motion.div>
