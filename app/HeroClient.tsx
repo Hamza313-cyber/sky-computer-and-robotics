@@ -46,7 +46,7 @@ export default function CyberHero() {
             /// TECHNOLOGY BEYOND LIMITS
           </motion.div>
 
-          <motion.h1 variants={fadeUp} className="font-display text-ink text-5xl md:text-7xl lg:text-[68px] 2xl:text-[84px] leading-[0.98] uppercase">
+          <motion.h1 variants={fadeUp} className="font-display text-ink text-[40px] sm:text-5xl md:text-7xl lg:text-[68px] 2xl:text-[84px] leading-[0.98] uppercase">
             SKY <br /> COMPUTERS &amp; <br /> ROBOTICS
           </motion.h1>
 

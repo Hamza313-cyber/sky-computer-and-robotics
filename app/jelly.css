@@ -352,6 +352,8 @@ body::after{
   .jelly, .jpill{ -webkit-backdrop-filter:none; backdrop-filter:none; }
   .gsheet, .gbubble{ -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
   .gsheet.hide-sm, .gbubble.hide-sm{ display:none; }
+  .gsheet{ max-width:62vw; max-height:42vw; border-radius:32px; }
+  .gbubble{ max-width:22vw; max-height:22vw; }
 }
 @media (prefers-reduced-motion: reduce){
   .jelly, .jpill, .jcap{ transition:none; }
