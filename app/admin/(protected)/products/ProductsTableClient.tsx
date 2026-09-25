@@ -83,14 +83,14 @@ export default function ProductsTableClient({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search products..."
-            className="w-full max-w-md rounded-none border border-[#00ff22]/20 bg-black/50 px-4 py-2 font-mono text-xs text-white outline-none focus:border-[#00ff22]"
+            className="w-full max-w-md rounded-none border border-black/20 bg-white/30 px-4 py-2 font-mono text-xs text-ink outline-none focus:border-accent"
           />
         </form>
       </div>
 
-      <div className="overflow-x-auto border border-[#00ff22]/20 bg-[#040a06]">
-        <table className="w-full text-left font-mono text-xs text-gray-400">
-          <thead className="border-b border-[#00ff22]/20 bg-[#00ff22]/5 text-[#00ff22]">
+      <div className="overflow-x-auto border border-black/20 bg-white/35">
+        <table className="w-full text-left font-mono text-xs text-body">
+          <thead className="border-b border-black/20 bg-accent/5 text-accent">
             <tr>
               <th className="p-4 font-normal">Image</th>
               <th className="p-4 font-normal">Name</th>
@@ -101,26 +101,26 @@ export default function ProductsTableClient({
               <th className="p-4 font-normal text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#00ff22]/10">
+          <tbody className="divide-y divide-black/10">
             {products.map((p) => (
-              <tr key={p.id} className="hover:bg-white/5 transition-colors">
+              <tr key={p.id} className="hover:bg-black/5 transition-colors">
                 <td className="p-4">
                   {p.images?.[0] ? (
-                    <div className="relative h-10 w-10 overflow-hidden bg-black/50">
+                    <div className="relative h-10 w-10 overflow-hidden bg-white/30">
                       <Image src={p.images[0]} alt="" fill className="object-contain" />
                     </div>
                   ) : (
-                    <div className="h-10 w-10 bg-gray-800" />
+                    <div className="h-10 w-10 bg-black/10" />
                   )}
                 </td>
-                <td className="p-4 text-white">
+                <td className="p-4 text-ink">
                   <div className="font-bold">{p.name}</div>
-                  <div className="text-[10px] text-gray-500">{p.sku}</div>
+                  <div className="text-[10px] text-muted">{p.sku}</div>
                 </td>
                 <td className="p-4">{p.categories?.name}</td>
                 <td className="p-4">{p.price}</td>
                 <td className="p-4">
-                  <span className={p.in_stock ? "text-[#00ff22]" : "text-red-400"}>
+                  <span className={p.in_stock ? "text-accent" : "text-red-700"}>
                     {p.in_stock ? p.stock_qty : "Out"}
                   </span>
                 </td>
@@ -128,17 +128,17 @@ export default function ProductsTableClient({
                   <button
                     onClick={() => toggleActive(p.id, p.is_active)}
                     className={`px-2 py-1 text-[10px] uppercase tracking-widest ${
-                      p.is_active ? "bg-[#00ff22]/20 text-[#00ff22]" : "bg-red-950/50 text-red-400"
+                      p.is_active ? "bg-accent/20 text-accent" : "bg-red-500/10 text-red-700"
                     }`}
                   >
                     {p.is_active ? "Active" : "Hidden"}
                   </button>
                 </td>
                 <td className="p-4 text-right space-x-3">
-                  <Link href={`/admin/products/${p.id}`} className="text-[#00ff22] hover:underline">
+                  <Link href={`/admin/products/${p.id}`} className="text-accent hover:underline">
                     Edit
                   </Link>
-                  <button onClick={() => deleteProduct(p.id)} className="text-red-400 hover:underline">
+                  <button onClick={() => deleteProduct(p.id)} className="text-red-700 hover:underline">
                     Delete
                   </button>
                 </td>
@@ -146,7 +146,7 @@ export default function ProductsTableClient({
             ))}
             {products.length === 0 && (
               <tr>
-                <td colSpan={7} className="p-8 text-center text-gray-500">
+                <td colSpan={7} className="p-8 text-center text-muted">
                   No products found.
                 </td>
               </tr>
@@ -155,18 +155,18 @@ export default function ProductsTableClient({
         </table>
       </div>
 
-      <div className="mt-4 flex items-center justify-between font-mono text-xs text-gray-500">
+      <div className="mt-4 flex items-center justify-between font-mono text-xs text-muted">
         <div>
           Showing {products.length} of {count}
         </div>
         <div className="space-x-4">
           {page > 1 && (
-            <Link href={`/admin/products?page=${page - 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} className="text-[#00ff22] hover:underline">
+            <Link href={`/admin/products?page=${page - 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} className="text-accent hover:underline">
               ← Prev
             </Link>
           )}
           {page * 20 < count && (
-            <Link href={`/admin/products?page=${page + 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} className="text-[#00ff22] hover:underline">
+            <Link href={`/admin/products?page=${page + 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} className="text-accent hover:underline">
               Next →
             </Link>
           )}

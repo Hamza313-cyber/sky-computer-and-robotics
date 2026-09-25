@@ -13,7 +13,7 @@ export default async function AdminEnquiriesPage() {
 
   return (
     <div>
-      <h1 className="mb-6 font-mono text-2xl uppercase tracking-widest text-white">
+      <h1 className="mb-6 font-mono text-2xl uppercase tracking-widest text-ink">
         Customer Enquiries
       </h1>
       <EnquiriesClient initialEnquiries={data || []} />

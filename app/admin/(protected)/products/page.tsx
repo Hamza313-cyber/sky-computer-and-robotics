@@ -32,13 +32,13 @@ export default async function AdminProductsPage({
 
   return (
     <div>
-      <div className="mb-8 flex items-center justify-between border-b border-[#00ff22]/20 pb-4">
-        <h1 className="font-mono text-2xl uppercase tracking-widest text-white">
+      <div className="mb-8 flex items-center justify-between border-b border-black/20 pb-4">
+        <h1 className="font-mono text-2xl uppercase tracking-widest text-ink">
           Products
         </h1>
         <Link
           href="/admin/products/new"
-          className="bg-[#00ff22] px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-black hover:bg-white transition-colors"
+          className="jpill h-11 px-5 text-sm"
         >
           + Add Product
         </Link>

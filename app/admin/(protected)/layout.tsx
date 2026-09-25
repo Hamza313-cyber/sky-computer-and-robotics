@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { LayoutDashboard } from "lucide-react";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin" },
@@ -39,44 +40,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [supabase, router]);
 
   return (
-    <div className="min-h-screen bg-[#010603] text-white flex flex-col md:flex-row">
+    <div className="min-h-screen text-ink flex flex-col md:flex-row gap-4 p-3 md:p-5">
       {/* Sidebar */}
-      <aside className="w-full md:w-64 border-r border-[#00ff22]/20 bg-[#040a06] flex flex-col">
-        <div className="p-6 border-b border-[#00ff22]/20">
-          <Link href="/admin" className="font-mono text-sm tracking-widest text-[#00ff22] uppercase">
-            [ SKY_ADMIN ]
+      <aside className="gtile w-full md:w-64 md:shrink-0 rounded-[28px] flex flex-col md:sticky md:top-5 md:h-[calc(100vh-40px)]">
+        <div className="p-5 flex items-center gap-3">
+          <span className="jelly w-11 h-11 shrink-0">
+            <LayoutDashboard size={20} />
+          </span>
+          <Link href="/admin" className="font-display text-lg text-ink">
+            Sky Admin
           </Link>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 px-4 pb-4 flex flex-wrap md:flex-col gap-2">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block px-4 py-3 font-mono text-[11px] uppercase tracking-widest transition-colors ${
-                  isActive
-                    ? "bg-[#00ff22]/10 text-[#00ff22] border-l-2 border-[#00ff22]"
-                    : "text-gray-400 hover:text-[#00ff22] hover:bg-[#00ff22]/5"
-                }`}
+                aria-current={isActive ? "page" : undefined}
+                className={`${isActive ? "jpill active" : "jpill light"} h-11 px-4 text-sm md:w-full md:justify-start`}
               >
                 {item.label}
               </Link>
             );
           })}
         </nav>
-        <div className="p-4 border-t border-[#00ff22]/20">
+        <div className="p-4">
           <button
             onClick={handleLogout}
-            className="w-full px-4 py-3 text-left font-mono text-[11px] uppercase tracking-widest text-gray-400 hover:text-red-400 hover:bg-red-950/30 transition-colors"
+            className="jpill alt h-11 w-full text-sm"
           >
-            TERMINATE SESSION
+            Log out
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+      <main className="flex-1 min-w-0 md:p-3 overflow-y-auto">
         <div className="mx-auto max-w-6xl">
           {children}
         </div>

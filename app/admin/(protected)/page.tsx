@@ -1,3 +1,4 @@
+import { Package, CheckCircle2, AlertTriangle, MessageSquare, Eye } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
 export const revalidate = 0; // Dynamic dashboard
@@ -36,28 +37,25 @@ export default async function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="mb-8 font-mono text-2xl uppercase tracking-widest text-white">
-        Dashboard Overview
-      </h1>
+      <p className="text-[11px] font-bold uppercase tracking-[3px] text-label">Sky Admin</p>
+      <h1 className="mb-8 font-display text-3xl md:text-4xl text-ink">Dashboard</h1>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total Products" value={totalProducts || 0} />
-        <StatCard title="Active Products" value={activeProducts || 0} />
-        <StatCard title="Out of Stock" value={outOfStock || 0} alert={outOfStock ? outOfStock > 0 : false} />
-        <StatCard title="Monthly Enquiries" value={monthlyEnquiries || 0} />
-        <StatCard title="Monthly Views" value={monthlyViews || 0} />
+      <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-5">
+        <StatCard title="Total products" value={totalProducts || 0} icon={<Package size={20} />} />
+        <StatCard title="Active products" value={activeProducts || 0} icon={<CheckCircle2 size={20} />} />
+        <StatCard title="Out of stock" value={outOfStock || 0} icon={<AlertTriangle size={20} />} alert={outOfStock ? outOfStock > 0 : false} />
+        <StatCard title="Enquiries this month" value={monthlyEnquiries || 0} icon={<MessageSquare size={20} />} />
+        <StatCard title="Views this month" value={monthlyViews || 0} icon={<Eye size={20} />} />
       </div>
 
-      <div className="mt-12 border border-[#00ff22]/20 bg-black/50 p-6">
-        <h2 className="mb-4 font-mono text-sm uppercase tracking-widest text-[#00ff22]">
-          System Status
-        </h2>
-        <div className="font-mono text-xs text-gray-400 leading-relaxed">
+      <div className="gtile mt-8 rounded-[28px] p-6">
+        <h2 className="mb-4 font-display text-xl text-ink">System status</h2>
+        <div className="flex flex-wrap gap-3">
           {status.map((s) => (
-            <p key={s.label}>
-              &gt; {s.label}:{" "}
-              <span className={s.ok ? "text-[#00ff22]" : "text-red-400"}>{s.ok ? "OK" : "FAIL"}</span>
-            </p>
+            <span key={s.label} className={`${s.ok ? "jpill light" : "jpill alt"} h-10 px-4 text-sm gap-2`}>
+              <span aria-hidden className={`inline-block h-2.5 w-2.5 rounded-full ${s.ok ? "bg-green-600" : "bg-red-600"}`} />
+              {s.label}: {s.ok ? "OK" : "Problem"}
+            </span>
           ))}
         </div>
       </div>
@@ -65,21 +63,13 @@ export default async function AdminDashboard() {
   );
 }
 
-function StatCard({ title, value, alert = false }: { title: string; value: number | string; alert?: boolean }) {
+function StatCard({ title, value, icon, alert = false }: { title: string; value: number | string; icon: React.ReactNode; alert?: boolean }) {
   return (
-    <div
-      className={`border p-6 ${
-        alert
-          ? "border-red-500/50 bg-red-950/20 text-red-400"
-          : "border-[#00ff22]/25 bg-[#040a06] text-white"
-      }`}
-      style={{ clipPath: "polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)" }}
-    >
-      <div className={`mb-2 font-mono text-[10px] uppercase tracking-widest ${alert ? "text-red-400/80" : "text-gray-500"}`}>
-        {title}
-      </div>
-      <div className={`font-mono text-3xl ${alert ? "text-red-400" : "text-[#00ff22]"}`}>
-        {value}
+    <div className={`gtile rounded-[26px] p-5 flex flex-col gap-4 ${alert ? "ring-2 ring-red-500/50" : ""}`}>
+      <span className={`${alert ? "jelly alt" : "jelly"} w-11 h-11`}>{icon}</span>
+      <div>
+        <div className={`font-display text-3xl ${alert ? "text-red-700" : "text-ink"}`}>{value}</div>
+        <div className="mt-1 text-xs font-bold uppercase tracking-[1.5px] text-label">{title}</div>
       </div>
     </div>
   );

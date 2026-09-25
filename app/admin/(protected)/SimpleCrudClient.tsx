@@ -76,9 +76,9 @@ export default function SimpleCrudClient({ table, initialData }: { table: "categ
 
   return (
     <div className="grid gap-6 md:grid-cols-3">
-      <div className="md:col-span-2 border border-[#00ff22]/20 bg-[#040a06]">
-        <table className="w-full text-left font-mono text-xs text-gray-400">
-          <thead className="border-b border-[#00ff22]/20 bg-[#00ff22]/5 text-[#00ff22]">
+      <div className="md:col-span-2 border border-black/20 bg-white/35">
+        <table className="w-full text-left font-mono text-xs text-body">
+          <thead className="border-b border-black/20 bg-accent/5 text-accent">
             <tr>
               <th className="p-4">Name</th>
               <th className="p-4">Slug</th>
@@ -87,16 +87,16 @@ export default function SimpleCrudClient({ table, initialData }: { table: "categ
               <th className="p-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#00ff22]/10">
+          <tbody className="divide-y divide-black/10">
             {items.map((i) => (
-              <tr key={i.id} className="hover:bg-white/5">
-                <td className="p-4 text-white font-bold">{i.name}</td>
+              <tr key={i.id} className="hover:bg-black/5">
+                <td className="p-4 text-ink font-bold">{i.name}</td>
                 <td className="p-4">{i.slug}</td>
                 <td className="p-4">{i.sort_order}</td>
                 <td className="p-4">{i.is_active ? "Active" : "Hidden"}</td>
                 <td className="p-4 text-right space-x-3">
-                  <button onClick={() => setEditing(i)} className="text-[#00ff22]">Edit</button>
-                  <button onClick={() => deleteItem(i.id)} className="text-red-400">Delete</button>
+                  <button onClick={() => setEditing(i)} className="text-accent">Edit</button>
+                  <button onClick={() => deleteItem(i.id)} className="text-red-700">Delete</button>
                 </td>
               </tr>
             ))}
@@ -104,39 +104,39 @@ export default function SimpleCrudClient({ table, initialData }: { table: "categ
         </table>
       </div>
 
-      <div className="md:col-span-1 border border-[#00ff22]/20 bg-[#040a06] p-6 h-fit">
-        <h3 className="font-mono text-sm uppercase text-[#00ff22] mb-4 border-b border-[#00ff22]/20 pb-2">
+      <div className="md:col-span-1 border border-black/20 bg-white/35 p-6 h-fit">
+        <h3 className="font-mono text-sm uppercase text-accent mb-4 border-b border-black/20 pb-2">
           {editing ? "Edit Item" : "Add New Item"}
         </h3>
         <form key={editing?.id ?? "new"} onSubmit={handleSave} className="space-y-4">
           <div>
-            <label className="mb-1 block font-mono text-[10px] text-gray-400">Name</label>
-            <input name="name" defaultValue={editing?.name || ""} required className="w-full bg-black border border-[#00ff22]/20 p-2 text-white outline-none focus:border-[#00ff22]" />
+            <label className="mb-1 block font-mono text-[10px] text-body">Name</label>
+            <input name="name" defaultValue={editing?.name || ""} required className="w-full bg-white/60 border border-black/20 p-2 text-ink outline-none focus:border-accent" />
           </div>
           <div>
-            <label className="mb-1 block font-mono text-[10px] text-gray-400">Slug</label>
-            <input name="slug" defaultValue={editing?.slug || ""} required className="w-full bg-black border border-[#00ff22]/20 p-2 text-white outline-none focus:border-[#00ff22]" />
+            <label className="mb-1 block font-mono text-[10px] text-body">Slug</label>
+            <input name="slug" defaultValue={editing?.slug || ""} required className="w-full bg-white/60 border border-black/20 p-2 text-ink outline-none focus:border-accent" />
           </div>
           <div>
-            <label className="mb-1 block font-mono text-[10px] text-gray-400">Description</label>
-            <textarea name="description" defaultValue={editing?.description || ""} rows={3} className="w-full bg-black border border-[#00ff22]/20 p-2 text-white outline-none focus:border-[#00ff22]" />
+            <label className="mb-1 block font-mono text-[10px] text-body">Description</label>
+            <textarea name="description" defaultValue={editing?.description || ""} rows={3} className="w-full bg-white/60 border border-black/20 p-2 text-ink outline-none focus:border-accent" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block font-mono text-[10px] text-gray-400">Sort Order</label>
-              <input name="sort_order" type="number" defaultValue={editing?.sort_order || 0} className="w-full bg-black border border-[#00ff22]/20 p-2 text-white outline-none focus:border-[#00ff22]" />
+              <label className="mb-1 block font-mono text-[10px] text-body">Sort Order</label>
+              <input name="sort_order" type="number" defaultValue={editing?.sort_order || 0} className="w-full bg-white/60 border border-black/20 p-2 text-ink outline-none focus:border-accent" />
             </div>
             <div>
-              <label className="mb-1 block font-mono text-[10px] text-gray-400">Active</label>
-              <select name="is_active" defaultValue={editing?.is_active !== false ? "true" : "false"} className="w-full bg-black border border-[#00ff22]/20 p-2 text-white outline-none focus:border-[#00ff22]">
+              <label className="mb-1 block font-mono text-[10px] text-body">Active</label>
+              <select name="is_active" defaultValue={editing?.is_active !== false ? "true" : "false"} className="w-full bg-white/60 border border-black/20 p-2 text-ink outline-none focus:border-accent">
                 <option value="true">Yes</option>
                 <option value="false">No</option>
               </select>
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-4">
-            {editing && <button type="button" onClick={() => setEditing(null)} className="px-4 py-2 font-mono text-[10px] text-gray-400 border border-gray-800">Cancel</button>}
-            <button type="submit" className="px-4 py-2 font-mono text-[10px] text-black bg-[#00ff22]">{editing ? "Update" : "Create"}</button>
+            {editing && <button type="button" onClick={() => setEditing(null)} className="px-4 py-2 font-mono text-[10px] text-body border border-black/10">Cancel</button>}
+            <button type="submit" className="jpill h-10 px-5 text-sm">{editing ? "Update" : "Create"}</button>
           </div>
         </form>
       </div>

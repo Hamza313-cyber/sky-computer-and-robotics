@@ -9,7 +9,7 @@ export default async function AdminBrandsPage() {
 
   return (
     <div>
-      <h1 className="mb-6 font-mono text-2xl uppercase tracking-widest text-white">
+      <h1 className="mb-6 font-mono text-2xl uppercase tracking-widest text-ink">
         Brands
       </h1>
       <SimpleCrudClient table="brands" initialData={data || []} />

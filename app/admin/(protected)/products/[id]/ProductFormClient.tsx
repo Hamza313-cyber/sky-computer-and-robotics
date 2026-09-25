@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useForm } from "react-hook-form";
 
-const fieldClass = "w-full rounded-none border border-[#00ff22]/20 bg-black/50 px-3 py-2 text-white placeholder-gray-600 outline-none transition-all focus:border-[#00ff22]";
-const labelClass = "mb-1 block font-mono text-[10px] uppercase tracking-widest text-[#00ff22]/60";
+const fieldClass = "w-full rounded-none border border-black/20 bg-white/30 px-3 py-2 text-ink placeholder:text-muted outline-none transition-all focus:border-accent";
+const labelClass = "mb-1 block font-mono text-[10px] uppercase tracking-widest text-label";
 
 const slugify = (s: string) =>
   (s || "")
@@ -197,8 +197,8 @@ export default function ProductFormClient({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <div className="grid gap-6 md:grid-cols-2">
         {/* Basic Info */}
-        <div className="border border-[#00ff22]/20 bg-[#040a06] p-6 space-y-4">
-          <h2 className="border-b border-[#00ff22]/20 pb-2 font-mono text-xs uppercase tracking-widest text-[#00ff22]">
+        <div className="border border-black/20 bg-white/35 p-6 space-y-4">
+          <h2 className="border-b border-black/20 pb-2 font-mono text-xs uppercase tracking-widest text-accent">
             Basic Info
           </h2>
           <div>
@@ -240,8 +240,8 @@ export default function ProductFormClient({
         </div>
 
         {/* Categorization */}
-        <div className="border border-[#00ff22]/20 bg-[#040a06] p-6 space-y-4">
-          <h2 className="border-b border-[#00ff22]/20 pb-2 font-mono text-xs uppercase tracking-widest text-[#00ff22]">
+        <div className="border border-black/20 bg-white/35 p-6 space-y-4">
+          <h2 className="border-b border-black/20 pb-2 font-mono text-xs uppercase tracking-widest text-accent">
             Categorization
           </h2>
           <div>
@@ -259,18 +259,18 @@ export default function ProductFormClient({
             </select>
           </div>
           <div className="pt-4 flex gap-6">
-            <label className="flex items-center gap-2 font-mono text-[10px] uppercase text-white">
-              <input type="checkbox" {...register("is_active")} className="accent-[#00ff22]" /> Active
+            <label className="flex items-center gap-2 font-mono text-[10px] uppercase text-ink">
+              <input type="checkbox" {...register("is_active")} className="accent-[var(--accent)]" /> Active
             </label>
-            <label className="flex items-center gap-2 font-mono text-[10px] uppercase text-white">
-              <input type="checkbox" {...register("is_featured")} className="accent-[#00ff22]" /> Featured
+            <label className="flex items-center gap-2 font-mono text-[10px] uppercase text-ink">
+              <input type="checkbox" {...register("is_featured")} className="accent-[var(--accent)]" /> Featured
             </label>
           </div>
         </div>
 
         {/* Content */}
-        <div className="border border-[#00ff22]/20 bg-[#040a06] p-6 space-y-4 md:col-span-2">
-          <h2 className="border-b border-[#00ff22]/20 pb-2 font-mono text-xs uppercase tracking-widest text-[#00ff22]">
+        <div className="border border-black/20 bg-white/35 p-6 space-y-4 md:col-span-2">
+          <h2 className="border-b border-black/20 pb-2 font-mono text-xs uppercase tracking-widest text-accent">
             Descriptions
           </h2>
           <div>
@@ -284,41 +284,41 @@ export default function ProductFormClient({
         </div>
 
         {/* Specs & Images */}
-        <div className="border border-[#00ff22]/20 bg-[#040a06] p-6 space-y-4">
-          <h2 className="border-b border-[#00ff22]/20 pb-2 font-mono text-xs uppercase tracking-widest text-[#00ff22]">
+        <div className="border border-black/20 bg-white/35 p-6 space-y-4">
+          <h2 className="border-b border-black/20 pb-2 font-mono text-xs uppercase tracking-widest text-accent">
             Specifications
           </h2>
           <div className="flex gap-2">
             <input value={specKey} onChange={e => setSpecKey(e.target.value)} placeholder="Key (e.g. RAM)" className={fieldClass} />
             <input value={specValue} onChange={e => setSpecValue(e.target.value)} placeholder="Value (e.g. 16GB)" className={fieldClass} />
-            <button type="button" onClick={addSpec} className="bg-[#00ff22]/20 px-4 text-[#00ff22]">+</button>
+            <button type="button" onClick={addSpec} className="bg-accent/20 px-4 text-accent">+</button>
           </div>
           <div className="space-y-1">
             {Object.entries(specs).map(([k, v]) => (
-              <div key={k} className="flex justify-between border border-[#00ff22]/10 bg-black/50 px-3 py-1 font-mono text-[10px] text-white">
-                <span><span className="text-[#00ff22]">{k}:</span> {v as string}</span>
-                <button type="button" onClick={() => removeSpec(k)} className="text-red-400 hover:text-red-300">X</button>
+              <div key={k} className="flex justify-between border border-black/10 bg-white/30 px-3 py-1 font-mono text-[10px] text-ink">
+                <span><span className="text-accent">{k}:</span> {v as string}</span>
+                <button type="button" onClick={() => removeSpec(k)} className="text-red-700 hover:text-red-800">X</button>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="border border-[#00ff22]/20 bg-[#040a06] p-6 space-y-4">
-          <h2 className="border-b border-[#00ff22]/20 pb-2 font-mono text-xs uppercase tracking-widest text-[#00ff22]">
+        <div className="border border-black/20 bg-white/35 p-6 space-y-4">
+          <h2 className="border-b border-black/20 pb-2 font-mono text-xs uppercase tracking-widest text-accent">
             Images
           </h2>
           <div>
-            <input type="file" multiple accept="image/*" onChange={handleImageUpload} disabled={uploading} className="mb-4 text-xs text-gray-400" />
-            {uploading && <div className="text-xs text-[#00ff22]">Compressing...</div>}
+            <input type="file" multiple accept="image/*" onChange={handleImageUpload} disabled={uploading} className="mb-4 text-xs text-body" />
+            {uploading && <div className="text-xs text-accent">Compressing...</div>}
           </div>
           <div className="flex flex-wrap gap-2">
             {images.map((url: string, idx: number) => (
-              <div key={idx} className="relative h-16 w-16 border border-[#00ff22]/30 bg-black">
+              <div key={idx} className="relative h-16 w-16 border border-black/30 bg-white/60">
                 <img src={url} alt="" className="h-full w-full object-contain" />
                 <button
                   type="button"
                   onClick={() => setValue("images", images.filter((_: any, i: number) => i !== idx))}
-                  className="absolute -right-2 -top-2 rounded-full bg-red-500 px-1.5 text-[8px] text-white"
+                  className="absolute -right-2 -top-2 rounded-full bg-red-500 px-1.5 text-[8px] text-ink"
                 >
                   X
                 </button>
@@ -328,18 +328,18 @@ export default function ProductFormClient({
         </div>
       </div>
 
-      <div className="flex justify-end gap-4 border-t border-[#00ff22]/20 pt-6">
+      <div className="flex justify-end gap-4 border-t border-black/20 pt-6">
         <button
           type="button"
           onClick={() => router.back()}
-          className="border border-[#00ff22]/20 px-6 py-2 font-mono text-xs uppercase tracking-widest text-gray-400 hover:text-white"
+          className="border border-black/20 px-6 py-2 font-mono text-xs uppercase tracking-widest text-body hover:text-ink"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="bg-[#00ff22] px-8 py-2 font-mono text-xs font-bold uppercase tracking-widest text-black shadow-[0_0_15px_rgba(0,255,34,0.3)] hover:bg-white disabled:opacity-50"
+          className="jpill h-11 px-8 text-sm disabled:opacity-50"
         >
           {loading ? "Saving..." : "Save Product"}
         </button>

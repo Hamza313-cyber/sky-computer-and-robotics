@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { motion } from "motion/react";
+import { Lock } from "lucide-react";
 
-const field = "w-full rounded-lg border border-[#00ff22]/20 bg-black/50 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all focus:border-[#00ff22] focus:shadow-[0_0_20px_rgba(0,255,34,0.25)]";
+const field = "well w-full rounded-[20px] px-4 py-3 text-ink placeholder:text-muted outline-none";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -33,38 +34,38 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-[#010603] flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 text-ink">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md border border-[#00ff22]/25 bg-[#040a06] p-8"
-        style={{ clipPath: "polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px)" }}
+        className="gtile w-full max-w-md rounded-[32px] p-8"
       >
-        <div className="mb-8 flex items-center justify-between border-b border-[#00ff22]/25 pb-3">
-          <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#00ff22]">
-            System Login
+        <div className="mb-8 flex items-center gap-4">
+          <span className="jelly alt w-14 h-14 shrink-0">
+            <Lock size={24} />
           </span>
-          <motion.span
-            className="h-1.5 w-1.5 rounded-full bg-[#00ff22]"
-            animate={{ opacity: [1, 0.2, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[3px] text-label">Sky Admin</p>
+            <h1 className="font-display text-2xl text-ink">Sign in</h1>
+          </div>
         </div>
 
         {error && (
-          <div className="mb-6 border border-red-500/50 bg-red-950/80 px-4 py-3 font-mono text-[11px] text-red-400">
-            [ERROR]: {error}
+          <div role="alert" className="mb-6 rounded-2xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-700">
+            {error}
           </div>
         )}
 
         <form onSubmit={handleLogin} className="flex flex-col gap-5">
           <div>
-            <label className="mb-2 block font-mono text-[10px] uppercase tracking-widest text-[#00ff22]/60">
-              Email Identifier
+            <label htmlFor="admin-email" className="mb-2 block text-xs font-bold uppercase tracking-[2px] text-label">
+              Email
             </label>
             <input
+              id="admin-email"
               type="email"
               required
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={field}
@@ -72,12 +73,14 @@ export default function AdminLogin() {
             />
           </div>
           <div>
-            <label className="mb-2 block font-mono text-[10px] uppercase tracking-widest text-[#00ff22]/60">
-              Passcode
+            <label htmlFor="admin-password" className="mb-2 block text-xs font-bold uppercase tracking-[2px] text-label">
+              Password
             </label>
             <input
+              id="admin-password"
               type="password"
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={field}
@@ -85,15 +88,13 @@ export default function AdminLogin() {
             />
           </div>
 
-          <motion.button
+          <button
             type="submit"
             disabled={loading}
-            whileHover={!loading ? { scale: 1.02, boxShadow: "0 0 35px rgba(0,255,34,0.7)" } : undefined}
-            whileTap={!loading ? { scale: 0.98 } : undefined}
-            className="mt-4 bg-[#00ff22] py-3.5 font-mono text-sm font-black uppercase tracking-[0.18em] text-black shadow-[0_0_22px_rgba(0,255,34,0.4)] disabled:opacity-50"
+            className="jpill mt-3 h-14 w-full text-base disabled:opacity-60"
           >
-            {loading ? "Authenticating..." : "Initialize Session →"}
-          </motion.button>
+            {loading ? "Signing in..." : "Sign in →"}
+          </button>
         </form>
       </motion.div>
     </div>
