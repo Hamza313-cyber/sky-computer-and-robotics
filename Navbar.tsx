@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import ThemeToggle from "./components/ThemeToggle";
 
 type Category = {
   id: string;
@@ -18,101 +19,96 @@ export default function Navbar({ categories }: { categories: Category[] }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
+  useEffect(() => setMobileMenuOpen(false), [pathname]);
 
-  // Admin panel has its own chrome
   if (pathname.startsWith("/admin")) return null;
 
   const navLinks = [
-    { name: "HOME", href: "/" },
-    { name: "PRODUCTS", href: "/products" },
-    { name: "BRANDS", href: "/brands" },
-    { name: "ABOUT", href: "/about" },
-    { name: "CONTACT", href: "/contact" },
+    { name: "Home", href: "/" },
+    { name: "Products", href: "/products" },
+    { name: "Brands", href: "/brands" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (
     <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 font-mono ${
-        isScrolled ? "bg-[#010603]/90 backdrop-blur-md border-b border-[#00ff22]/20 py-3" : "bg-transparent py-5"
+      className={`fixed top-0 w-full z-50 transition-all duration-300 font-sans ${
+        isScrolled ? "headerglass py-3" : "bg-transparent border-transparent py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
-        {/* LOGO */}
-        <Link href="/" className="text-white font-black text-2xl tracking-widest relative z-50">
-          SKY
-          <span className="text-[#00ff22]">.</span>
-        </Link>
+        {/* LEFT: Toggle & Logo */}
+        <div className="flex items-center gap-4 z-50 relative">
+          <ThemeToggle />
+          <Link href="/" className="text-ink font-display text-2xl tracking-widest relative z-50 mt-1">
+            SKY<span className="text-accent">.</span>
+          </Link>
+        </div>
 
         {/* DESKTOP NAV */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <div
-              key={link.name}
-              className="relative"
-              onMouseEnter={() => link.name === "PRODUCTS" && setProductsOpen(true)}
-              onMouseLeave={() => link.name === "PRODUCTS" && setProductsOpen(false)}
-            >
-              <Link
-                href={link.href}
-                className={`text-sm tracking-widest flex items-center gap-1 transition-colors ${
-                  pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/")
-                    ? "text-[#00ff22] drop-shadow-[0_0_8px_rgba(0,255,34,0.5)]"
-                    : "text-gray-300 hover:text-white"
-                }`}
+        <nav className="hidden md:flex items-center gap-4">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/");
+            return (
+              <div
+                key={link.name}
+                className="relative"
+                onMouseEnter={() => link.name === "Products" && setProductsOpen(true)}
+                onMouseLeave={() => link.name === "Products" && setProductsOpen(false)}
               >
-                {link.name}
-                {link.name === "PRODUCTS" && <ChevronDown size={14} className="opacity-50" />}
-              </Link>
+                <Link
+                  href={link.href}
+                  className={`flex items-center gap-1 px-[22px] py-[12px] text-[15px] ${isActive ? "jpill active" : "jpill alt"}`}
+                >
+                  {link.name}
+                  {link.name === "Products" && <ChevronDown size={14} className="opacity-70" />}
+                </Link>
 
-              {/* PRODUCTS DROPDOWN */}
-              {link.name === "PRODUCTS" && (
-                <AnimatePresence>
-                  {productsOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-0 mt-4 w-56 bg-[#001104]/95 backdrop-blur-md border border-[#00ff22]/30 p-2 rounded-lg shadow-[0_10px_40px_rgba(0,0,0,0.8)] flex flex-col gap-1"
-                    >
-                      {categories.map((cat) => (
-                        <Link
-                          key={cat.id}
-                          href={`/products/${cat.slug}`}
-                          className="px-4 py-2 text-xs text-gray-300 hover:text-[#00ff22] hover:bg-[#00ff22]/10 rounded transition-colors tracking-wider uppercase"
-                        >
-                          {cat.name}
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              )}
-            </div>
-          ))}
-          <form action="/search" method="GET" className="relative flex items-center">
+                {/* PRODUCTS DROPDOWN */}
+                {link.name === "Products" && (
+                  <AnimatePresence>
+                    {productsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute top-full left-0 mt-2 w-56 gtile p-3 rounded-[24px] flex flex-col gap-1 z-50"
+                      >
+                        {categories.map((cat) => (
+                          <Link
+                            key={cat.id}
+                            href={`/products/${cat.slug}`}
+                            className="px-4 py-2 text-sm text-ink hover:bg-white/30 rounded-xl transition-colors tracking-wide"
+                          >
+                            {cat.name}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                )}
+              </div>
+            );
+          })}
+          <form action="/search" method="GET" className="relative flex items-center ml-2">
             <input
               type="text"
               name="q"
-              placeholder="Search..."
-              className="bg-black/50 border border-[#00ff22]/30 rounded-full px-4 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff22] font-mono"
+              placeholder="Search products..."
+              className="well px-4 py-[12px] text-[15px] text-ink placeholder-muted focus:outline-none focus:ring-2 focus:ring-accent w-48"
             />
           </form>
         </nav>
 
-        {/* MOBILE TOGGLE */}
+        {/* MOBILE MENU BTN */}
         <button
-          className="md:hidden text-white relative z-50"
+          className="md:hidden jelly btn w-12 h-12 relative z-50"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -126,29 +122,29 @@ export default function Navbar({ categories }: { categories: Category[] }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-[#010603]/98 backdrop-blur-xl flex flex-col items-center justify-center gap-8"
+            className="fixed inset-0 z-40 flex flex-col items-center justify-center gap-6"
+            style={{ background: "var(--bg-grad)" }}
           >
             <form action="/search" method="GET" className="w-64 mb-4" onSubmit={() => setMobileMenuOpen(false)}>
               <input
                 type="text"
                 name="q"
-                placeholder="Search..."
-                className="w-full bg-black/50 border border-[#00ff22]/30 rounded-full px-6 py-3 text-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff22] text-center font-mono"
+                placeholder="Search products..."
+                className="well w-full px-6 py-4 text-lg text-ink placeholder-muted focus:outline-none focus:ring-2 focus:ring-accent text-center"
               />
             </form>
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={`text-2xl font-bold tracking-widest ${
-                  pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/")
-                    ? "text-[#00ff22]"
-                    : "text-gray-300"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/");
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`text-[18px] px-8 py-3 ${isActive ? "jpill active" : "jpill alt"}`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>

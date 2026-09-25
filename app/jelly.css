@@ -1,0 +1,196 @@
+/* Sky jelly-glass design system — Chocolate (default) + Milky (data-theme="neu").
+   Classes: .jelly (round orb; add .light for caramel/white; add .btn when clickable),
+            .jpill (capsule button; .light variant), .gtile (thick glass tile/card),
+            .well (inset input), .gsheet (decorative glass sheet). */
+/* Inside @layer components so Tailwind utilities (position, display, bg-*, w-*) can still override. */
+@layer components {
+
+/* ===== Sky jelly-glass system (shared by mockup + website) ===== */
+:root{
+  --j-core:#5A2E1B; --j-core2:#3A1A0E;          /* dark chocolate core */
+  --j-coreL:#B77A52; --j-coreL2:#8E5534;        /* caramel core */
+  --j-rim:rgba(196,132,86,.55); --j-rim2:rgba(235,190,150,.75);                /* translucent glass rim */
+  --j-rimEdge:rgba(255,255,255,.75);
+  --j-glow:rgba(255,186,120,.85);               /* bottom caustic */
+  --j-shadow:rgba(74,37,24,.45);
+  --j-ink:#FFF4E8; --j-inkL:#FFF4E8;
+  --t-fill1:rgba(255,236,218,.34); --t-fill2:rgba(150,92,55,.22);
+  --t-edge:rgba(255,255,255,.75); --t-inner:rgba(140,88,56,.22); --t-shadow:rgba(74,37,24,.38);
+}
+[data-theme="neu"]{
+  --j-core:#1A1C22; --j-core2:#050608;
+  --j-coreL:#FFFFFF; --j-coreL2:#DCE0E6;
+  --j-rim:rgba(110,118,132,.30); --j-rim2:rgba(235,238,244,.8);
+  --j-rimEdge:rgba(255,255,255,.9);
+  --j-glow:rgba(120,160,255,.45);
+  --j-shadow:rgba(40,46,60,.35);
+  --j-ink:#FFFFFF; --j-inkL:#14161B;
+  --t-fill1:rgba(255,255,255,.55); --t-fill2:rgba(200,206,216,.22);
+  --t-edge:rgba(255,255,255,.95); --t-inner:rgba(150,158,172,.25); --t-shadow:rgba(60,70,90,.22);
+}
+
+/* round jelly orb */
+.jelly{
+  position:relative; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  color:var(--j-ink); border:0; cursor:pointer; isolation:isolate;
+  background:
+    radial-gradient(circle at 50% 42%, var(--j-core) 0, var(--j-core2) 52%, rgba(0,0,0,0) 53.5%),
+    linear-gradient(180deg, var(--j-rim) 0, var(--j-rim2) 100%);
+  box-shadow:
+    inset 0 0 0 1.5px var(--j-rimEdge),
+    inset 0 -6px 10px rgba(0,0,0,.18),
+    0 14px 18px -8px var(--j-shadow),
+    0 4px 6px rgba(0,0,0,.12);
+  transition:transform .15s ease, box-shadow .2s ease, filter .15s ease;
+}
+.jelly.light{ color:var(--j-inkL);
+  background:
+    radial-gradient(circle at 50% 42%, var(--j-coreL) 0, var(--j-coreL2) 52%, rgba(0,0,0,0) 53.5%),
+    linear-gradient(180deg, var(--j-rim) 0, var(--j-rim2) 100%);
+}
+/* top specular crescent */
+.jelly::before{
+  content:""; position:absolute; z-index:-1; left:18%; top:6%; width:64%; height:34%; border-radius:50% 50% 45% 45%;
+  background:linear-gradient(180deg, rgba(255,255,255,.95) 0, rgba(255,255,255,.45) 35%, rgba(255,255,255,0) 100%);
+  pointer-events:none;
+}
+/* bottom caustic glow */
+.jelly::after{
+  content:""; position:absolute; z-index:-1; left:18%; bottom:5%; width:64%; height:34%; border-radius:50%;
+  background:radial-gradient(ellipse at 50% 100%, var(--j-glow) 0, rgba(255,255,255,0) 70%);
+  pointer-events:none;
+}
+
+.jelly.btn:hover{ transform:translateY(-2px); filter:brightness(1.05); }
+.jelly.btn:active{ transform:translateY(2px) scale(.95);
+  box-shadow: inset 0 0 0 1.5px var(--j-rimEdge), inset 0 4px 10px rgba(0,0,0,.35), 0 4px 6px -2px var(--j-shadow); }
+
+/* capsule jelly button (text) */
+.jpill{
+  position:relative; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  border-radius:999px; border:0; cursor:pointer; isolation:isolate; font-weight:700; text-decoration:none;
+  color:var(--j-ink);
+  background:linear-gradient(180deg, var(--j-core) 0, var(--j-core2) 100%);
+  box-shadow:
+    inset 0 0 0 1.5px var(--j-rimEdge),
+    inset 0 0 0 5px var(--j-rim),
+    inset 0 -6px 10px rgba(0,0,0,.25),
+    0 14px 18px -8px var(--j-shadow),
+    0 4px 6px rgba(0,0,0,.12);
+  transition:transform .15s ease, box-shadow .2s ease, filter .15s ease;
+}
+.jpill.light{ color:var(--j-inkL); background:linear-gradient(180deg, var(--j-coreL) 0, var(--j-coreL2) 100%); }
+.jpill::before{
+  content:""; position:absolute; z-index:-1; left:6%; top:7%; width:88%; height:46%; border-radius:999px;
+  background:linear-gradient(180deg, rgba(255,255,255,.75) 0, rgba(255,255,255,.18) 60%, rgba(255,255,255,0) 100%);
+  pointer-events:none;
+}
+.jpill::after{
+  content:""; position:absolute; z-index:-1; left:18%; bottom:8%; width:64%; height:34%; border-radius:999px;
+  background:radial-gradient(ellipse at 50% 100%, var(--j-glow) 0, rgba(255,255,255,0) 70%);
+  pointer-events:none;
+}
+
+.jpill:hover{ transform:translateY(-2px); filter:brightness(1.06); }
+.jpill:active{ transform:translateY(2px) scale(.97);
+  box-shadow: inset 0 0 0 1.5px var(--j-rimEdge), inset 0 0 0 5px var(--j-rim), inset 0 5px 12px rgba(0,0,0,.4), 0 4px 6px -2px var(--j-shadow); }
+
+/* thick glass tile (container) */
+.gtile{
+  position:relative; isolation:isolate;
+  background:linear-gradient(160deg, var(--t-fill1) 0, var(--t-fill2) 100%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%); backdrop-filter:blur(14px) saturate(140%);
+  box-shadow:
+    inset 0 0 0 1.5px var(--t-edge),
+    inset 0 0 0 7px var(--t-inner),
+    inset 0 0 0 8.5px rgba(255,255,255,.35),
+    inset 0 -10px 18px rgba(120,70,40,.10),
+    0 22px 34px -14px var(--t-shadow),
+    0 6px 10px rgba(0,0,0,.06);
+}
+.gtile::before{
+  content:""; position:absolute; z-index:-1; inset:9px 9px 55% 9px; border-radius:inherit;
+  background:linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0));
+  pointer-events:none;
+}
+
+/* floating glass sheets behind content */
+.gsheet{
+  position:absolute; pointer-events:none; border-radius:48px;
+  background:linear-gradient(150deg, rgba(255,255,255,.34) 0, rgba(255,255,255,.08) 100%);
+  -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%);
+  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.55), inset 0 2px 0 rgba(255,255,255,.7), 0 30px 60px -30px rgba(74,37,24,.35);
+}
+[data-theme="neu"] .gsheet{ box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.8), inset 0 2px 0 #fff, 0 30px 60px -30px rgba(60,70,90,.25); }
+
+.jpill.light, .jelly.light{}
+.jpill:focus-visible, .jelly.btn:focus-visible{ outline:3px solid var(--accent); outline-offset:3px; }
+[data-theme="neu"] .jpill.active{
+  box-shadow: inset 0 0 0 1.5px rgba(120,160,255,.9), inset 0 0 0 5px rgba(47,107,255,.25),
+    inset 0 -6px 10px rgba(0,0,0,.25), 0 14px 18px -8px rgba(40,46,60,.35), 0 0 20px rgba(47,107,255,.3);
+}
+.well{ background:rgba(255,255,255,.28); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,.12), inset 0 0 0 1.5px rgba(255,255,255,.6); border-radius:9999px; }
+[data-theme="neu"] .well{ background:rgba(255,255,255,.55);
+  box-shadow: inset 4px 4px 8px #C6CBD4, inset -4px -4px 8px #FFFFFF, inset 0 0 0 1px rgba(255,255,255,.9); }
+
+/* glassy page background: coloured blobs behind everything */
+body{ background: var(--bg); }
+body::before{
+  content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(circle at 10% 12%, rgba(185,130,92,.60) 0, rgba(185,130,92,0) 24%),
+    radial-gradient(circle at 88% 10%, rgba(110,60,36,.45) 0, rgba(110,60,36,0) 26%),
+    radial-gradient(circle at 62% 42%, rgba(246,222,198,1) 0, rgba(246,222,198,0) 30%),
+    radial-gradient(circle at 16% 66%, rgba(150,92,58,.45) 0, rgba(150,92,58,0) 26%),
+    radial-gradient(circle at 86% 82%, rgba(205,150,108,.6) 0, rgba(205,150,108,0) 28%),
+    linear-gradient(160deg, #F0E0CF 0, #DFC6AE 100%);
+  transition: opacity .45s ease;
+}
+[data-theme="neu"] body::before{
+  background:
+    radial-gradient(circle at 12% 12%, rgba(31,94,255,.16) 0, rgba(31,94,255,0) 24%),
+    radial-gradient(circle at 88% 10%, rgba(140,150,178,.38) 0, rgba(140,150,178,0) 26%),
+    radial-gradient(circle at 60% 42%, rgba(255,255,255,1) 0, rgba(255,255,255,0) 30%),
+    radial-gradient(circle at 18% 66%, rgba(110,130,185,.22) 0, rgba(110,130,185,0) 26%),
+    radial-gradient(circle at 86% 82%, rgba(31,94,255,.12) 0, rgba(31,94,255,0) 26%),
+    linear-gradient(160deg, #F6F7F9 0, #E2E5EA 100%);
+}
+.gsheet{ position:fixed; z-index:-1; }
+
+/* Phase-1 classes upgraded to the jelly look (Navbar already uses these) */
+.glass, .card{
+  background:linear-gradient(160deg, var(--t-fill1) 0, var(--t-fill2) 100%) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(140%); backdrop-filter:blur(14px) saturate(140%);
+  box-shadow: inset 0 0 0 1.5px var(--t-edge), inset 0 0 0 7px var(--t-inner), inset 0 0 0 8.5px rgba(255,255,255,.35),
+    0 22px 34px -14px var(--t-shadow), 0 6px 10px rgba(0,0,0,.06) !important;
+  border:0 !important;
+}
+
+@media (max-width:640px){
+  .gtile, .glass, .card, .well{ -webkit-backdrop-filter:blur(8px) saturate(130%); backdrop-filter:blur(8px) saturate(130%); }
+  .gsheet{ display:none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .jelly, .jpill{ transition:none; }
+  .jelly.btn:hover, .jelly.btn:active, .jpill:hover, .jpill:active{ transform:none; }
+}
+
+/* .alt = caramel in Chocolate, black in Milky (used for nav + secondary buttons) */
+.jpill.alt{ color:var(--j-inkL); background:linear-gradient(180deg, var(--j-coreL) 0, var(--j-coreL2) 100%); }
+[data-theme="neu"] .jpill.alt{ color:var(--j-ink); background:linear-gradient(180deg, var(--j-core) 0, var(--j-core2) 100%); }
+.jelly.alt{ color:var(--j-inkL);
+  background: radial-gradient(circle at 50% 42%, var(--j-coreL) 0, var(--j-coreL2) 52%, rgba(0,0,0,0) 53.5%),
+              linear-gradient(180deg, var(--j-rim) 0, var(--j-rim2) 100%); }
+[data-theme="neu"] .jelly.alt{ color:var(--j-ink);
+  background: radial-gradient(circle at 50% 42%, var(--j-core) 0, var(--j-core2) 52%, rgba(0,0,0,0) 53.5%),
+              linear-gradient(180deg, var(--j-rim) 0, var(--j-rim2) 100%); }
+
+/* scrolled navbar: thin frosted bar */
+.headerglass{
+  background:linear-gradient(180deg, var(--t-fill1), var(--t-fill2));
+  -webkit-backdrop-filter:blur(18px) saturate(150%); backdrop-filter:blur(18px) saturate(150%);
+  box-shadow: inset 0 -1.5px 0 var(--t-edge), 0 10px 24px -14px var(--t-shadow);
+}
+
+}

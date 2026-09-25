@@ -1,20 +1,104 @@
 @import "tailwindcss";
 
+@custom-variant neu (&:where([data-theme="neu"], [data-theme="neu"] *));
+
 :root {
-  --background: #050b08;
-  --foreground: #ededed;
+  --bg:#EADBCB; --bg-grad: radial-gradient(ellipse at 80% 10%,#F4E8DB 0,#EADBCB 55%,#E2CFBC 100%);
+  --ink:#3B1E12; --body:#5A3322; --muted:#6B4130; --label:#8A5638; --accent:#B9825C;
+  --glass: rgba(255,248,240,0.38); --glass-border: rgba(255,255,255,0.7);
+  --glass-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 24px 48px rgba(74,37,24,0.18);
+  --card-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 18px 36px rgba(74,37,24,0.14);
+  --btn1-bg: radial-gradient(circle at 30% 20%,rgba(255,255,255,0.5) 0,rgba(255,255,255,0) 40%),linear-gradient(160deg,rgba(123,74,51,0.85),rgba(74,37,24,0.94));
+  --btn1-ink:#FFF4E8; --btn1-border: rgba(255,255,255,0.35);
+  --btn1-shadow: inset 0 -6px 12px rgba(0,0,0,0.35), inset 0 3px 6px rgba(255,255,255,0.2), 0 12px 24px rgba(74,37,24,0.35);
+  --btn2-bg: radial-gradient(circle at 30% 20%,rgba(255,255,255,0.7) 0,rgba(255,255,255,0) 45%),linear-gradient(160deg,#E4C3A4,#C99772);
+  --btn2-ink:#3B1E12; --btn2-border: rgba(255,255,255,0.7);
+  --btn2-shadow: inset 0 -5px 10px rgba(122,74,51,0.3), 0 10px 20px rgba(74,37,24,0.22);
+  --nav-bg: var(--glass); --nav-ink: var(--ink); --nav-border: var(--glass-border);
+  --nav-shadow: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -3px 6px rgba(122,74,51,0.12), 0 6px 12px rgba(74,37,24,0.12);
+  --input-bg: rgba(255,248,240,0.5); --input-shadow: inset 0 2px 6px rgba(74,37,24,0.14);
+  --press-shadow: inset 0 6px 14px rgba(0,0,0,0.35), 0 2px 4px rgba(74,37,24,0.2);
+  /* Keeping old vars */
+  --surface: #001a08;
+  --accent-soft: rgba(0, 255, 34, 0.25);
+  --tile: #080d0a;
+  --border: rgba(0, 255, 34, 0.3);
+  --glow: 0 0 25px rgba(0, 255, 34, 0.6);
+}
+
+[data-theme="neu"] {
+  --bg:#F1F2F5; --bg-grad: linear-gradient(160deg,#F6F7F9 0,#E7E9ED 100%);
+  --ink:#14161B; --body:#3E4350; --muted:#555B67; --label:#555B67; --accent:#1F5EFF;
+  --glass:#EEF0F3; --glass-border: rgba(255,255,255,0.8);
+  --glass-shadow: 12px 12px 26px #C6CBD4, -12px -12px 26px #FFFFFF;
+  --card-shadow: 10px 10px 22px #C6CBD4, -10px -10px 22px #FFFFFF;
+  --btn1-bg: radial-gradient(circle at 30% 18%,rgba(255,255,255,0.2) 0,rgba(255,255,255,0) 42%),linear-gradient(160deg,#2B2F37,#08090B);
+  --btn1-ink:#FFFFFF; --btn1-border: rgba(255,255,255,0.1);
+  --btn1-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -4px 8px rgba(0,0,0,0.5), 8px 8px 18px #BFC4CD, -6px -6px 14px #FFFFFF;
+  --btn2-bg: var(--btn1-bg); --btn2-ink:#FFFFFF; --btn2-border: var(--btn1-border); --btn2-shadow: var(--btn1-shadow);
+  --nav-bg: var(--btn1-bg); --nav-ink:#D6DEF0; --nav-border: rgba(255,255,255,0.08); --nav-shadow: var(--btn1-shadow);
+  --input-bg:#EEF0F3; --input-shadow: inset 4px 4px 8px #C6CBD4, inset -4px -4px 8px #FFFFFF;
+  --press-shadow: inset 5px 5px 10px rgba(0,0,0,0.75), inset -3px -3px 8px rgba(255,255,255,0.1), 2px 2px 6px #C3C8D1;
+  /* Keeping old vars */
+  --surface: #E9ECF1;
+  --accent-soft: rgba(47, 107, 255, 0.15);
+  --tile: #0D1220;
+  --border: transparent;
+  --glow: none;
+}
+
+@utility raised {
+  box-shadow: 8px 8px 16px #C5C9D2, -8px -8px 16px #FFFFFF;
+}
+@utility pressed {
+  box-shadow: inset 6px 6px 12px #C5C9D2, inset -6px -6px 12px #FFFFFF;
+}
+@utility radius-card {
+  border-radius: 28px;
+}
+@utility radius-pill {
+  border-radius: 9999px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-label: var(--label);
+  --color-accent: var(--accent);
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  /* Keep old for compatibility */
+  --color-surface: var(--surface);
+  --color-accent-soft: var(--accent-soft);
+  --color-tile: var(--tile);
+  --color-border-color: var(--border);
+  --shadow-glow: var(--glow);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg-grad);
+  background-attachment: fixed;
+  color: var(--ink);
+  transition: background .45s ease, color .45s ease;
+}
+
+@layer components {
+  .glass        { background: var(--glass); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 28px; }
+  .card         { background: var(--glass); border: 1px solid var(--glass-border); box-shadow: var(--card-shadow); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 28px; }
+  .btn-primary  { background: var(--btn1-bg); color: var(--btn1-ink); border: 1px solid var(--btn1-border); box-shadow: var(--btn1-shadow); border-radius: 9999px; font-weight: 700; }
+  .btn-secondary{ background: var(--btn2-bg); color: var(--btn2-ink); border: 1px solid var(--btn2-border); box-shadow: var(--btn2-shadow); border-radius: 9999px; font-weight: 700; }
+  .nav-pill     { background: var(--nav-bg); color: var(--nav-ink); border: 1px solid var(--nav-border); box-shadow: var(--nav-shadow); border-radius: 9999px; }
+  .nav-pill-active { background: var(--btn1-bg); color: var(--btn1-ink); border: 1px solid var(--btn1-border); box-shadow: var(--btn1-shadow); border-radius: 9999px; font-weight: 700; }
+  [data-theme="neu"] .nav-pill-active { border-color: rgba(47,107,255,0.5); box-shadow: var(--btn1-shadow), 0 0 18px rgba(47,107,255,0.25); }
+  .input-well   { background: var(--input-bg); box-shadow: var(--input-shadow); border: 1px solid var(--glass-border); border-radius: 9999px; }
+  .press        { cursor: pointer; transition: transform .15s ease, box-shadow .3s ease, filter .15s ease; }
+  .press:hover  { transform: translateY(-3px); filter: brightness(1.05); }
+  .press:active { transform: translateY(3px) scale(.97); box-shadow: var(--press-shadow) !important; }
+  .press:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .press, .press:hover, .press:active { transform: none; transition: none; } }
+  @media (max-width: 640px) { .glass, .card { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); } }
 }
 
 @keyframes assemble-left {

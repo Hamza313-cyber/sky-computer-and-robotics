@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Archivo_Black, DM_Sans } from "next/font/google";
 import "./globals.css";
+import "./jelly.css";
+import GlassBackdrop from "../components/GlassBackdrop";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { createClient } from "@/lib/supabase/public";
 import PageViewTracker from "./components/PageViewTracker";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const archivoBlack = Archivo_Black({
+  weight: "400",
+  variable: "--font-display",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dmSans = DM_Sans({
+  weight: ["400", "500", "700"],
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
@@ -33,9 +37,24 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${archivoBlack.variable} ${dmSans.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[#010603] text-white overflow-x-hidden">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.getItem('sky-theme') === 'neu') {
+                  document.documentElement.setAttribute('data-theme', 'neu');
+                }
+              } catch (_) {}
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col bg-bg text-ink font-sans overflow-x-hidden">
+        <GlassBackdrop />
         <PageViewTracker />
         <Navbar categories={categories || []} />
         <main className="flex-1">{children}</main>
