@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/public";
-import PageShell from "../../PageShell";
 import Link from "next/link";
-import Image from "next/image";
+import { Search, SearchX } from "lucide-react";
+import PageShell from "../../PageShell";
+import ProductCard from "../../components/ProductCard";
 
 export const revalidate = 0; // Dynamic page for search
 
@@ -21,7 +22,7 @@ export default async function SearchPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const resolved = await searchParams;
-  const q = typeof resolved.q === "string" ? resolved.q : "";
+  const q = typeof resolved.q === "string" ? resolved.q.trim() : "";
   const parsedPage = typeof resolved.page === "string" ? parseInt(resolved.page) : 1;
   const page = Math.max(1, isNaN(parsedPage) ? 1 : parsedPage);
   const limit = 24;
@@ -31,7 +32,6 @@ export default async function SearchPage({
   const supabase = createClient();
   let products: any[] | null = [];
   let count = 0;
-
   let errorMessage: string | null = null;
 
   if (q) {
@@ -39,10 +39,10 @@ export default async function SearchPage({
       .from("products")
       .select("*, categories(name, slug), brands(name, slug)", { count: "exact" })
       .eq("is_active", true)
-      .textSearch('search_text', q, { type: 'websearch', config: 'english' })
+      .textSearch("search_text", q, { type: "websearch", config: "english" })
       .order("created_at", { ascending: false })
       .range(from, to);
-      
+
     if (error) {
       console.error("Search error:", error);
       errorMessage = "Invalid search query. Please try different keywords.";
@@ -52,91 +52,80 @@ export default async function SearchPage({
     }
   }
 
+  const totalPages = Math.max(1, Math.ceil(count / limit));
+
   return (
     <PageShell
-      eyebrow="/// SEARCH RESULTS"
-      title={q ? `Results for "${q}"` : "Search"}
-      lede={q ? `Found ${count} products matching your query.` : "Enter a search term to find products."}
+      eyebrow="/// SEARCH"
+      title={q ? "Results" : "Search"}
+      lede={q ? `${count} ${count === 1 ? "product" : "products"} found for “${q}”.` : "Search by product name, brand or spec."}
     >
-      {!q && !errorMessage && (
-        <div className="py-20 text-center font-mono text-gray-500">
-          Please enter a search query.
+      {/* search box */}
+      <form action="/search" method="GET" role="search" className="gtile mb-10 flex flex-col gap-3 rounded-[32px] p-3 sm:flex-row sm:items-center">
+        <label className="well flex flex-1 items-center gap-3 px-5 h-14">
+          <Search className="w-5 h-5 text-label shrink-0" aria-hidden="true" />
+          <span className="sr-only">Search products</span>
+          <input
+            type="search"
+            name="q"
+            defaultValue={q}
+            placeholder="e.g. MacBook, 16GB RAM, CCTV camera"
+            className="w-full bg-transparent text-ink placeholder:text-muted outline-none text-base"
+          />
+        </label>
+        <button type="submit" className="jpill h-14 px-8 text-base">Search</button>
+      </form>
+
+      {errorMessage && (
+        <div className="gtile rounded-[30px] p-10 text-center flex flex-col items-center gap-4">
+          <span className="jelly alt w-16 h-16 flex items-center justify-center"><SearchX className="w-7 h-7" /></span>
+          <p className="text-body">{errorMessage}</p>
         </div>
       )}
 
       {q && count === 0 && !errorMessage && (
-        <div className="py-20 text-center font-mono text-gray-500">
-          No products found for "{q}".
-        </div>
-      )}
-
-      {errorMessage && (
-        <div className="py-20 text-center font-mono text-red-500">
-          {errorMessage}
+        <div className="gtile rounded-[30px] p-10 text-center flex flex-col items-center gap-4">
+          <span className="jelly alt w-16 h-16 flex items-center justify-center"><SearchX className="w-7 h-7" /></span>
+          <p className="text-body">
+            Nothing found for “{q}”. Try a shorter word, or ask us directly, we may have it in store.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link href="/products" className="jpill alt h-11 px-6 text-sm">Browse all products</Link>
+            <a
+              href={`https://wa.me/917001904082?text=${encodeURIComponent(`Hi, do you have ${q}?`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="jpill h-11 px-6 text-sm"
+            >
+              Ask on WhatsApp →
+            </a>
+          </div>
         </div>
       )}
 
       {products && products.length > 0 && (
         <>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {products.map((p) => (
-              <Link
-                key={p.id}
-                href={`/products/${p.categories?.slug}/${p.slug}`}
-                className="group flex h-full flex-col border border-[#00ff22]/20 bg-[#040a06] transition-colors hover:border-[#00ff22]/60"
-              >
-                <div className="relative aspect-square w-full overflow-hidden border-b border-[#00ff22]/20 bg-black/50 p-6">
-                  <Image
-                    src={p.images?.[0] || "/placeholder.png"}
-                    alt={p.name}
-                    fill
-                    className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
-                  />
-                  {!p.in_stock && (
-                    <div className="absolute right-3 top-3 border border-red-500/50 bg-red-950/80 px-2 py-1 font-mono text-[10px] text-red-400">
-                      OUT OF STOCK
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-1 flex-col justify-between p-5">
-                  <div>
-                    <div className="mb-2 font-mono text-[10px] uppercase text-[#00ff22]">
-                      {p.brands?.name}
-                    </div>
-                    <h3 className="mb-2 text-sm font-medium text-white">{p.name}</h3>
-                    <p className="line-clamp-2 text-xs text-gray-400">
-                      {p.short_description}
-                    </p>
-                  </div>
-                  <div className="mt-4 font-mono text-sm text-[#00ff22]">
-                    {p.currency} {p.price?.toLocaleString()}
-                  </div>
-                </div>
-              </Link>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {products.map((p, i) => (
+              <ProductCard key={p.id} p={p} i={i} href={`/products/${p.categories?.slug || "unknown"}/${p.slug}`} />
             ))}
           </div>
 
-          <div className="mt-12 flex items-center justify-between border-t border-[#00ff22]/20 pt-6 font-mono text-sm">
-            <Link
-              href={page > 1 ? `?q=${encodeURIComponent(q)}&page=${page - 1}` : "#"}
-              className={`flex items-center gap-2 border border-[#00ff22]/30 px-4 py-2 transition-colors ${
-                page > 1 ? "text-[#00ff22] hover:bg-[#00ff22]/10" : "pointer-events-none text-gray-700"
-              }`}
-            >
-              ← PREV
-            </Link>
-            <span className="text-gray-400">
-              PAGE {page} OF {Math.max(1, Math.ceil(count / limit))}
-            </span>
-            <Link
-              href={page * limit < count ? `?q=${encodeURIComponent(q)}&page=${page + 1}` : "#"}
-              className={`flex items-center gap-2 border border-[#00ff22]/30 px-4 py-2 transition-colors ${
-                page * limit < count ? "text-[#00ff22] hover:bg-[#00ff22]/10" : "pointer-events-none text-gray-700"
-              }`}
-            >
-              NEXT →
-            </Link>
-          </div>
+          {totalPages > 1 && (
+            <nav aria-label="Pagination" className="mt-10 flex items-center justify-center gap-4">
+              {page > 1 ? (
+                <Link href={`?q=${encodeURIComponent(q)}&page=${page - 1}`} className="jpill alt h-11 px-5 text-sm">← Prev</Link>
+              ) : (
+                <span className="jpill alt h-11 px-5 text-sm opacity-40 pointer-events-none" aria-disabled="true">← Prev</span>
+              )}
+              <span className="text-ink font-bold text-sm">Page {page} of {totalPages}</span>
+              {page < totalPages ? (
+                <Link href={`?q=${encodeURIComponent(q)}&page=${page + 1}`} className="jpill alt h-11 px-5 text-sm">Next →</Link>
+              ) : (
+                <span className="jpill alt h-11 px-5 text-sm opacity-40 pointer-events-none" aria-disabled="true">Next →</span>
+              )}
+            </nav>
+          )}
         </>
       )}
     </PageShell>

@@ -1,55 +1,41 @@
-﻿"use client";
+"use client";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { useState } from "react";
+import CategoryImage from "../../components/CategoryImage";
 
 export function HubCard({ c, i }: { c: any; i: number }) {
-  const [broken, setBroken] = useState(false);
-  const num = String(i + 1).padStart(2, "0");
-  
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.55, delay: (i % 3) * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      className="h-full"
     >
       <Link
         href={`/products/${c.slug}`}
-        className="group relative flex h-full flex-col overflow-hidden border border-[#00ff22]/25 bg-[#040a06] transition-all hover:border-[#00ff22] hover:shadow-[0_0_38px_rgba(0,255,34,0.2)]"
-        style={{ clipPath: "polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px)" }}
+        className="gtile group flex h-full flex-col rounded-[32px] p-4 transition-transform duration-300 hover:-translate-y-1"
       >
-        <div className="relative h-52 overflow-hidden bg-[#0d1410]">
-          {broken || !c.image_url ? (
-            <div className="absolute inset-0 flex items-center justify-center font-mono text-[10px] tracking-[0.2em] text-[#00ff22]/35">
-              {(c.image_url || c.slug).replace("/", "").toUpperCase()}
-            </div>
-          ) : (
-            <img
-              src={c.image_url}
-              alt={c.name}
-              onError={() => setBroken(true)}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-          )}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#040a06] via-transparent to-transparent" />
-          <span className="absolute left-4 top-4 font-mono text-[10px] tracking-[0.2em] text-[#00ff22]">
-            {num}
-          </span>
+        <div className="relative h-56 overflow-hidden rounded-[24px] shadow-[0_14px_26px_-10px_rgba(74,37,24,0.45)] neu:shadow-[0_14px_26px_-10px_rgba(20,22,27,0.25)]">
+          <CategoryImage
+            slug={c.slug}
+            src={c.image_url}
+            alt={c.name}
+            className="h-full w-full rounded-[24px] transition-transform duration-700 group-hover:scale-105"
+          />
         </div>
 
-        <div className="flex flex-1 flex-col p-5">
-          <h2 className="text-2xl font-black uppercase tracking-wide text-white transition-colors group-hover:text-[#00ff22]">
-            {c.name}
-          </h2>
-          <p className="mt-1 font-mono text-[11px] tracking-wide text-[#00ff22]/70">{c.tagline}</p>
-          <p className="mt-4 flex-1 text-sm leading-relaxed text-gray-400">{c.description}</p>
-          <div className="mt-5 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[#00ff22]">
-            Open <span className="transition-transform group-hover:translate-x-1.5">&rarr;</span>
-          </div>
+        <div className="flex flex-1 flex-col px-2 pb-2 pt-5">
+          {c.tagline && (
+            <p className="text-label text-xs font-bold uppercase tracking-[0.25em]">{c.tagline}</p>
+          )}
+          <h2 className="mt-2 font-display text-ink text-2xl uppercase">{c.name}</h2>
+          {c.description && <p className="mt-3 flex-1 text-sm leading-relaxed text-body">{c.description}</p>}
+          <span className="jpill mt-5 h-11 w-fit px-5 text-sm">
+            Browse <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+          </span>
         </div>
       </Link>
     </motion.div>
   );
 }
-

@@ -18,7 +18,7 @@ export default async function ProductsHub() {
       title="Products"
       lede="Everything from high performance machines to smart security - pick a category to see what we stock."
     >
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {categories?.map((c, i) => (
           <HubCard key={c.id} c={c} i={i} />
         ))}

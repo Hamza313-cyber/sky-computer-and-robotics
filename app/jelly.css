@@ -1,196 +1,360 @@
-/* Sky jelly-glass design system — Chocolate (default) + Milky (data-theme="neu").
-   Classes: .jelly (round orb; add .light for caramel/white; add .btn when clickable),
-            .jpill (capsule button; .light variant), .gtile (thick glass tile/card),
-            .well (inset input), .gsheet (decorative glass sheet). */
-/* Inside @layer components so Tailwind utilities (position, display, bg-*, w-*) can still override. */
+/* Sky jelly-glass design system v2 — Chocolate (default) + Milky (data-theme="neu").
+   Orbs  : .jelly (dark)  .jelly.alt (caramel / black in milky)  .jelly.light (clear glass)  + .btn when clickable
+   Pills : .jpill  .jpill.alt  .jpill.light  (+ .active for the current nav item)
+   Tiles : .gtile (thick glass box)   .well (inset input)   .headerglass (scrolled navbar)
+   Decor : .gsheet (floating glass sheet), .gbubble (glass bubble) — see components/GlassBackdrop.tsx
+   Everything sits in @layer components so Tailwind utilities can still override position/size/bg. */
 @layer components {
 
-/* ===== Sky jelly-glass system (shared by mockup + website) ===== */
+/* ---------- theme tokens ---------- */
 :root{
-  --j-core:#5A2E1B; --j-core2:#3A1A0E;          /* dark chocolate core */
-  --j-coreL:#B77A52; --j-coreL2:#8E5534;        /* caramel core */
-  --j-rim:rgba(196,132,86,.55); --j-rim2:rgba(235,190,150,.75);                /* translucent glass rim */
-  --j-rimEdge:rgba(255,255,255,.75);
-  --j-glow:rgba(255,186,120,.85);               /* bottom caustic */
-  --j-shadow:rgba(74,37,24,.45);
-  --j-ink:#FFF4E8; --j-inkL:#FFF4E8;
-  --t-fill1:rgba(255,236,218,.34); --t-fill2:rgba(150,92,55,.22);
-  --t-edge:rgba(255,255,255,.75); --t-inner:rgba(140,88,56,.22); --t-shadow:rgba(74,37,24,.38);
+  --t-fill1:rgba(255,246,236,.30); --t-fill2:rgba(150,96,62,.12);
+  --t-edge:rgba(255,255,255,.75); --t-outline:rgba(78,40,20,.68); --t-inner:rgba(255,238,222,.55);
+  --t-shadow:rgba(70,35,15,.42);
+  --o-glow:rgba(255,196,146,.60); --o-shadow:rgba(60,28,12,.50);
 }
 [data-theme="neu"]{
-  --j-core:#1A1C22; --j-core2:#050608;
-  --j-coreL:#FFFFFF; --j-coreL2:#DCE0E6;
-  --j-rim:rgba(110,118,132,.30); --j-rim2:rgba(235,238,244,.8);
-  --j-rimEdge:rgba(255,255,255,.9);
-  --j-glow:rgba(120,160,255,.45);
-  --j-shadow:rgba(40,46,60,.35);
-  --j-ink:#FFFFFF; --j-inkL:#14161B;
-  --t-fill1:rgba(255,255,255,.55); --t-fill2:rgba(200,206,216,.22);
-  --t-edge:rgba(255,255,255,.95); --t-inner:rgba(150,158,172,.25); --t-shadow:rgba(60,70,90,.22);
+  --t-fill1:rgba(255,255,255,.55); --t-fill2:rgba(205,211,220,.20);
+  --t-edge:rgba(255,255,255,.95); --t-outline:rgba(120,128,142,.45); --t-inner:rgba(255,255,255,.85);
+  --t-shadow:rgba(50,58,75,.26);
+  --o-glow:rgba(120,160,255,.45); --o-shadow:rgba(20,24,34,.45);
 }
 
-/* round jelly orb */
+/* ---------- orb colour sets ---------- */
+.jelly, .jpill{
+  --o-light:#86502F; --o-mid:#5A2C19; --o-dark:#3E1C0F; --o-edge:#2A1209;
+  --o-outline:rgba(40,18,8,.70); --o-line:rgba(255,214,182,.30); --o-ink:#FFF1E4;
+}
+.jelly.alt, .jpill.alt{
+  --o-light:#D49A6E; --o-mid:#AD6B44; --o-dark:#8C4E2E; --o-edge:#6E3A21;
+  --o-outline:rgba(70,34,16,.65); --o-line:rgba(255,226,200,.40); --o-ink:#FFF4EA;
+}
+.jelly.light, .jpill.light{
+  --o-light:rgba(236,202,172,.72); --o-mid:rgba(212,170,134,.62); --o-dark:rgba(184,136,98,.62); --o-edge:rgba(140,92,60,.75);
+  --o-outline:rgba(92,52,30,.55); --o-line:rgba(255,255,255,.55); --o-ink:#3B1E12;
+}
+[data-theme="neu"] .jelly, [data-theme="neu"] .jpill,
+[data-theme="neu"] .jelly.alt, [data-theme="neu"] .jpill.alt{
+  --o-light:#454B57; --o-mid:#1D2027; --o-dark:#0C0D11; --o-edge:#000;
+  --o-outline:rgba(0,0,0,.75); --o-line:rgba(160,185,255,.28); --o-ink:#FFFFFF;
+}
+[data-theme="neu"] .jelly.light, [data-theme="neu"] .jpill.light{
+  --o-light:#FFFFFF; --o-mid:#F2F4F7; --o-dark:#DDE1E7; --o-edge:#BCC3CE;
+  --o-outline:rgba(120,128,142,.55); --o-line:rgba(255,255,255,.95); --o-ink:#14161B;
+}
+
+/* ---------- round orb ---------- */
 .jelly{
-  position:relative; border-radius:50%; display:flex; align-items:center; justify-content:center;
-  color:var(--j-ink); border:0; cursor:pointer; isolation:isolate;
-  background:
-    radial-gradient(circle at 50% 42%, var(--j-core) 0, var(--j-core2) 52%, rgba(0,0,0,0) 53.5%),
-    linear-gradient(180deg, var(--j-rim) 0, var(--j-rim2) 100%);
+  position:relative; isolation:isolate; border:0; border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--o-ink);
+  background:var(--sweep) var(--sweep-pos, -80% 0) / 260% 100% no-repeat,
+    radial-gradient(circle at 50% 72%, var(--o-light) 0, var(--o-mid) 42%, var(--o-dark) 74%, var(--o-edge) 100%);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
   box-shadow:
-    inset 0 0 0 1.5px var(--j-rimEdge),
-    inset 0 -6px 10px rgba(0,0,0,.18),
-    0 14px 18px -8px var(--j-shadow),
-    0 4px 6px rgba(0,0,0,.12);
-  transition:transform .15s ease, box-shadow .2s ease, filter .15s ease;
+    inset 0 0 0 1.5px var(--o-outline),
+    inset 0 0 0 3.5px var(--o-line),
+    inset 0 7px 10px -4px rgba(0,0,0,.30),
+    inset 0 -10px 16px -6px var(--o-glow),
+    0 12px 16px -5px var(--o-shadow),
+    0 4px 6px rgba(40,18,8,.28),
+    var(--hg, 0 0 0 0 transparent);
+  transition:transform .5s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease, filter .2s ease, background-position .75s ease;
 }
-.jelly.light{ color:var(--j-inkL);
-  background:
-    radial-gradient(circle at 50% 42%, var(--j-coreL) 0, var(--j-coreL2) 52%, rgba(0,0,0,0) 53.5%),
-    linear-gradient(180deg, var(--j-rim) 0, var(--j-rim2) 100%);
-}
-/* top specular crescent */
+/* specular crescent hugging the top edge */
 .jelly::before{
-  content:""; position:absolute; z-index:-1; left:18%; top:6%; width:64%; height:34%; border-radius:50% 50% 45% 45%;
-  background:linear-gradient(180deg, rgba(255,255,255,.95) 0, rgba(255,255,255,.45) 35%, rgba(255,255,255,0) 100%);
+  content:""; position:absolute; z-index:-1; left:17%; top:5%; width:66%; height:34%;
+  border-radius:50% 50% 42% 42% / 62% 62% 38% 38%;
+  background:linear-gradient(180deg, rgba(255,255,255,.92) 0, rgba(255,255,255,.42) 38%, rgba(255,255,255,0) 100%);
   pointer-events:none;
 }
-/* bottom caustic glow */
+/* tiny sparkle + warm caustic at the bottom */
 .jelly::after{
-  content:""; position:absolute; z-index:-1; left:18%; bottom:5%; width:64%; height:34%; border-radius:50%;
-  background:radial-gradient(ellipse at 50% 100%, var(--j-glow) 0, rgba(255,255,255,0) 70%);
+  content:""; position:absolute; z-index:-1; left:24%; bottom:7%; width:52%; height:26%; border-radius:50%;
+  background:radial-gradient(ellipse at 50% 100%, var(--o-glow) 0, rgba(255,255,255,0) 72%);
   pointer-events:none;
 }
+.jelly svg{ filter:drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+.jelly.light svg{ filter:drop-shadow(0 1px 0 rgba(255,255,255,.6)); }
 
-.jelly.btn:hover{ transform:translateY(-2px); filter:brightness(1.05); }
-.jelly.btn:active{ transform:translateY(2px) scale(.95);
-  box-shadow: inset 0 0 0 1.5px var(--j-rimEdge), inset 0 4px 10px rgba(0,0,0,.35), 0 4px 6px -2px var(--j-shadow); }
-
-/* capsule jelly button (text) */
+/* ---------- capsule button ---------- */
 .jpill{
-  position:relative; display:inline-flex; align-items:center; justify-content:center; gap:10px;
-  border-radius:999px; border:0; cursor:pointer; isolation:isolate; font-weight:700; text-decoration:none;
-  color:var(--j-ink);
-  background:linear-gradient(180deg, var(--j-core) 0, var(--j-core2) 100%);
+  position:relative; isolation:isolate; border:0; border-radius:9999px; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  font-weight:700; text-decoration:none; color:var(--o-ink); text-shadow:0 1px 1px rgba(0,0,0,.25);
+  background:var(--sweep) var(--sweep-pos, -80% 0) / 260% 100% no-repeat,
+    radial-gradient(ellipse 85% 140% at 50% 115%, var(--o-light) 0, var(--o-mid) 48%, var(--o-dark) 80%, var(--o-edge) 100%);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
   box-shadow:
-    inset 0 0 0 1.5px var(--j-rimEdge),
-    inset 0 0 0 5px var(--j-rim),
-    inset 0 -6px 10px rgba(0,0,0,.25),
-    0 14px 18px -8px var(--j-shadow),
-    0 4px 6px rgba(0,0,0,.12);
-  transition:transform .15s ease, box-shadow .2s ease, filter .15s ease;
+    inset 0 0 0 1.5px var(--o-outline),
+    inset 0 0 0 3.5px var(--o-line),
+    inset 0 6px 9px -5px rgba(0,0,0,.30),
+    inset 0 -9px 14px -7px var(--o-glow),
+    0 12px 16px -7px var(--o-shadow),
+    0 3px 5px rgba(0,0,0,.14),
+    var(--hg, 0 0 0 0 transparent);
+  transition:transform .5s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease, filter .2s ease, background-position .75s ease;
 }
-.jpill.light{ color:var(--j-inkL); background:linear-gradient(180deg, var(--j-coreL) 0, var(--j-coreL2) 100%); }
+.jpill.light{ text-shadow:0 1px 0 rgba(255,255,255,.6); }
 .jpill::before{
-  content:""; position:absolute; z-index:-1; left:6%; top:7%; width:88%; height:46%; border-radius:999px;
-  background:linear-gradient(180deg, rgba(255,255,255,.75) 0, rgba(255,255,255,.18) 60%, rgba(255,255,255,0) 100%);
+  content:""; position:absolute; z-index:-1; left:7%; top:7%; width:86%; height:42%; border-radius:9999px;
+  background:linear-gradient(180deg, rgba(255,255,255,.80) 0, rgba(255,255,255,.28) 50%, rgba(255,255,255,0) 100%);
   pointer-events:none;
 }
 .jpill::after{
-  content:""; position:absolute; z-index:-1; left:18%; bottom:8%; width:64%; height:34%; border-radius:999px;
-  background:radial-gradient(ellipse at 50% 100%, var(--j-glow) 0, rgba(255,255,255,0) 70%);
+  content:""; position:absolute; z-index:-1; left:20%; bottom:6%; width:60%; height:36%; border-radius:9999px;
+  background:radial-gradient(ellipse at 50% 100%, var(--o-glow) 0, rgba(255,255,255,0) 72%);
   pointer-events:none;
 }
 
-.jpill:hover{ transform:translateY(-2px); filter:brightness(1.06); }
-.jpill:active{ transform:translateY(2px) scale(.97);
-  box-shadow: inset 0 0 0 1.5px var(--j-rimEdge), inset 0 0 0 5px var(--j-rim), inset 0 5px 12px rgba(0,0,0,.4), 0 4px 6px -2px var(--j-shadow); }
+/* ---------- press / hover: jelly wobble, light sweep, squash + bounce ---------- */
+.jelly, .jpill, .jcap{
+  --sweep:linear-gradient(110deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 62%);
+  --hg-on:0 0 0 3px rgba(255,214,176,.35), 0 0 26px 2px rgba(255,160,96,.45);
+}
+[data-theme="neu"] .jelly, [data-theme="neu"] .jpill, [data-theme="neu"] .jcap{
+  --hg-on:0 0 0 3px rgba(120,160,255,.35), 0 0 26px 2px rgba(47,107,255,.40);
+}
+@keyframes jelly-wobble{
+  0%  { transform:translateY(0) scale(1,1); }
+  28% { transform:translateY(-3px) scale(1.09,.93); }
+  52% { transform:translateY(-6px) scale(.96,1.06); }
+  72% { transform:translateY(-4px) scale(1.03,.98); }
+  88% { transform:translateY(-5px) scale(.995,1.01); }
+  100%{ transform:translateY(-5px) scale(1.03,1.03); }
+}
+@keyframes jelly-wobble-sm{  /* gentler for wide pills */
+  0%  { transform:translateY(0) scale(1,1); }
+  30% { transform:translateY(-3px) scale(1.05,.94); }
+  55% { transform:translateY(-5px) scale(.98,1.05); }
+  78% { transform:translateY(-4px) scale(1.015,.99); }
+  100%{ transform:translateY(-4px) scale(1.02,1.02); }
+}
+.jelly.btn:hover, .jcap:hover{
+  animation:jelly-wobble .65s ease-out forwards;
+  --sweep-pos:180% 0; --hg:var(--hg-on); filter:brightness(1.08) saturate(1.08);
+}
+.jpill:hover{
+  animation:jelly-wobble-sm .6s ease-out forwards;
+  --sweep-pos:180% 0; --hg:var(--hg-on); filter:brightness(1.08) saturate(1.08);
+}
+.jelly.btn:hover::before, .jpill:hover::before, .jcap:hover::after{ opacity:1; filter:brightness(1.15); }
+/* press: squash down; on release the hover wobble replays = jelly bounce */
+.jpill:active, .jelly.btn:active, .jcap:active{
+  animation:none;
+  transform:translateY(3px) scale(1.06,.86);
+  transition:transform .08s ease-out, box-shadow .08s ease-out;
+  filter:brightness(.95);
+  box-shadow:
+    inset 0 0 0 1.5px var(--o-outline, var(--c-outline)),
+    inset 0 0 0 3.5px var(--o-line, var(--c-rim)),
+    inset 0 10px 16px rgba(0,0,0,.5),
+    0 2px 4px -1px var(--o-shadow, var(--c-shadow));
+}
+.jelly.btn:active, .jcap:active{ transform:translateY(3px) scale(1.08,.88); }
+.jpill:active::before, .jelly.btn:active::before{ opacity:.45; transform:translateY(8%); }
+.jelly::before, .jpill::before{ transition:opacity .2s ease, transform .2s ease, filter .2s ease; }
+.jpill:focus-visible, .jelly.btn:focus-visible, [data-theme="neu"] .jpill.active{
+  --hg:0 0 20px rgba(47,107,255,.35);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(120,160,255,.95),
+    inset 0 0 0 3.5px rgba(47,107,255,.30),
+    inset 0 6px 9px -5px rgba(0,0,0,.35),
+    0 12px 16px -7px var(--o-shadow),
+    var(--hg);
+}
+:root:not([data-theme="neu"]) .jpill.active{ filter:brightness(1.08) saturate(1.1); }
 
-/* thick glass tile (container) */
+/* ---------- thick glass tile ---------- */
 .gtile{
   position:relative; isolation:isolate;
   background:linear-gradient(160deg, var(--t-fill1) 0, var(--t-fill2) 100%);
-  -webkit-backdrop-filter:blur(14px) saturate(140%); backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(150%); backdrop-filter:blur(18px) saturate(150%);
+  border:1.5px solid var(--t-outline);
   box-shadow:
-    inset 0 0 0 1.5px var(--t-edge),
-    inset 0 0 0 7px var(--t-inner),
-    inset 0 0 0 8.5px rgba(255,255,255,.35),
-    inset 0 -10px 18px rgba(120,70,40,.10),
-    0 22px 34px -14px var(--t-shadow),
-    0 6px 10px rgba(0,0,0,.06);
+    inset 0 0 0 2px var(--t-inner),
+    inset 0 2px 0 3px rgba(255,255,255,.35),
+    inset 0 -4px 10px rgba(90,50,28,.16),
+    0 22px 30px -12px var(--t-shadow),
+    0 6px 10px rgba(70,35,15,.16);
 }
-.gtile::before{
-  content:""; position:absolute; z-index:-1; inset:9px 9px 55% 9px; border-radius:inherit;
-  background:linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0));
+.gtile::before{   /* top gloss band */
+  content:""; position:absolute; z-index:-1; inset:4px 4px 58% 4px; border-radius:inherit;
+  background:linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,0));
   pointer-events:none;
 }
+[data-theme="neu"] .gtile{ box-shadow:
+    inset 0 0 0 2px var(--t-inner),
+    inset 0 2px 0 3px rgba(255,255,255,.6),
+    inset 0 -4px 10px rgba(120,128,142,.12),
+    12px 14px 28px -12px var(--t-shadow),
+    -8px -8px 20px rgba(255,255,255,.7); }
 
-/* floating glass sheets behind content */
-.gsheet{
-  position:absolute; pointer-events:none; border-radius:48px;
-  background:linear-gradient(150deg, rgba(255,255,255,.34) 0, rgba(255,255,255,.08) 100%);
-  -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%);
-  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.55), inset 0 2px 0 rgba(255,255,255,.7), 0 30px 60px -30px rgba(74,37,24,.35);
+/* ---------- inset input ---------- */
+.well{
+  background:rgba(255,248,240,.32); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  border:1.5px solid var(--t-outline); border-radius:9999px;
+  box-shadow: inset 0 3px 7px rgba(70,35,15,.22), inset 0 0 0 2px rgba(255,238,222,.35);
 }
-[data-theme="neu"] .gsheet{ box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.8), inset 0 2px 0 #fff, 0 30px 60px -30px rgba(60,70,90,.25); }
+[data-theme="neu"] .well{ background:rgba(255,255,255,.6);
+  box-shadow: inset 4px 4px 8px #C6CBD4, inset -4px -4px 8px #FFFFFF; }
 
-.jpill.light, .jelly.light{}
-.jpill:focus-visible, .jelly.btn:focus-visible{ outline:3px solid var(--accent); outline-offset:3px; }
-[data-theme="neu"] .jpill.active{
-  box-shadow: inset 0 0 0 1.5px rgba(120,160,255,.9), inset 0 0 0 5px rgba(47,107,255,.25),
-    inset 0 -6px 10px rgba(0,0,0,.25), 0 14px 18px -8px rgba(40,46,60,.35), 0 0 20px rgba(47,107,255,.3);
+/* ---------- scrolled navbar ---------- */
+.headerglass{
+  background:linear-gradient(180deg, var(--t-fill1), var(--t-fill2));
+  -webkit-backdrop-filter:blur(22px) saturate(160%); backdrop-filter:blur(22px) saturate(160%);
+  box-shadow: inset 0 -1.5px 0 var(--t-outline), inset 0 -3px 0 var(--t-inner), 0 10px 24px -14px var(--t-shadow);
 }
-.well{ background:rgba(255,255,255,.28); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
-  box-shadow: inset 0 2px 6px rgba(0,0,0,.12), inset 0 0 0 1.5px rgba(255,255,255,.6); border-radius:9999px; }
-[data-theme="neu"] .well{ background:rgba(255,255,255,.55);
-  box-shadow: inset 4px 4px 8px #C6CBD4, inset -4px -4px 8px #FFFFFF, inset 0 0 0 1px rgba(255,255,255,.9); }
 
-/* glassy page background: coloured blobs behind everything */
-body{ background: var(--bg); }
+/* ---------- glassy page background ---------- */
 body::before{
-  content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;
+  content:""; position:fixed; inset:0; z-index:-3; pointer-events:none;
   background:
-    radial-gradient(circle at 10% 12%, rgba(185,130,92,.60) 0, rgba(185,130,92,0) 24%),
-    radial-gradient(circle at 88% 10%, rgba(110,60,36,.45) 0, rgba(110,60,36,0) 26%),
-    radial-gradient(circle at 62% 42%, rgba(246,222,198,1) 0, rgba(246,222,198,0) 30%),
-    radial-gradient(circle at 16% 66%, rgba(150,92,58,.45) 0, rgba(150,92,58,0) 26%),
-    radial-gradient(circle at 86% 82%, rgba(205,150,108,.6) 0, rgba(205,150,108,0) 28%),
-    linear-gradient(160deg, #F0E0CF 0, #DFC6AE 100%);
-  transition: opacity .45s ease;
+    radial-gradient(circle at 8% 10%, rgba(176,112,70,.70) 0, rgba(176,112,70,0) 22%),
+    radial-gradient(circle at 92% 6%, rgba(98,50,28,.55) 0, rgba(98,50,28,0) 24%),
+    radial-gradient(circle at 60% 40%, rgba(250,228,204,1) 0, rgba(250,228,204,0) 30%),
+    radial-gradient(circle at 14% 64%, rgba(140,82,48,.55) 0, rgba(140,82,48,0) 24%),
+    radial-gradient(circle at 84% 70%, rgba(210,150,104,.70) 0, rgba(210,150,104,0) 26%),
+    radial-gradient(circle at 40% 96%, rgba(120,66,38,.45) 0, rgba(120,66,38,0) 24%),
+    linear-gradient(160deg, #EEDCC9 0, #D9BEA4 100%);
 }
 [data-theme="neu"] body::before{
   background:
-    radial-gradient(circle at 12% 12%, rgba(31,94,255,.16) 0, rgba(31,94,255,0) 24%),
-    radial-gradient(circle at 88% 10%, rgba(140,150,178,.38) 0, rgba(140,150,178,0) 26%),
-    radial-gradient(circle at 60% 42%, rgba(255,255,255,1) 0, rgba(255,255,255,0) 30%),
-    radial-gradient(circle at 18% 66%, rgba(110,130,185,.22) 0, rgba(110,130,185,0) 26%),
-    radial-gradient(circle at 86% 82%, rgba(31,94,255,.12) 0, rgba(31,94,255,0) 26%),
-    linear-gradient(160deg, #F6F7F9 0, #E2E5EA 100%);
+    radial-gradient(circle at 10% 10%, rgba(31,94,255,.20) 0, rgba(31,94,255,0) 22%),
+    radial-gradient(circle at 90% 8%, rgba(130,140,170,.42) 0, rgba(130,140,170,0) 24%),
+    radial-gradient(circle at 60% 40%, rgba(255,255,255,1) 0, rgba(255,255,255,0) 30%),
+    radial-gradient(circle at 16% 66%, rgba(100,122,185,.26) 0, rgba(100,122,185,0) 24%),
+    radial-gradient(circle at 86% 74%, rgba(31,94,255,.14) 0, rgba(31,94,255,0) 24%),
+    linear-gradient(160deg, #F4F5F8 0, #DFE3E9 100%);
 }
-.gsheet{ position:fixed; z-index:-1; }
+/* fine frosted grain on top of the colours */
+body::after{
+  content:""; position:fixed; inset:0; z-index:-2; pointer-events:none; opacity:.22; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
 
-/* Phase-1 classes upgraded to the jelly look (Navbar already uses these) */
+/* floating glass sheets + bubbles (components/GlassBackdrop.tsx) */
+.gsheet, .gbubble{
+  position:fixed; z-index:-1; pointer-events:none; overflow:hidden;
+  background:linear-gradient(145deg, rgba(255,255,255,.40) 0, rgba(255,255,255,.10) 55%, rgba(255,255,255,.18) 100%);
+  -webkit-backdrop-filter:blur(26px) saturate(170%); backdrop-filter:blur(26px) saturate(170%);
+  border:1.5px solid rgba(255,255,255,.60);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.75), inset 0 0 0 5px rgba(255,255,255,.10),
+              inset 0 -6px 14px rgba(120,70,40,.10), 0 30px 60px -28px rgba(70,35,15,.40);
+}
+.gsheet{ border-radius:48px; }
+.gbubble{ border-radius:50%; }
+.gsheet::after, .gbubble::after{   /* diagonal light streak */
+  content:""; position:absolute; inset:-20%;
+  background:linear-gradient(115deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.38) 47%, rgba(255,255,255,0) 56%);
+}
+[data-theme="neu"] .gsheet, [data-theme="neu"] .gbubble{
+  border-color:rgba(255,255,255,.9);
+  box-shadow: inset 0 2px 0 #fff, inset 0 0 0 5px rgba(255,255,255,.2), 0 30px 60px -28px rgba(50,58,75,.28);
+}
+
+
+/* ---------- product capsule: tall tinted-chocolate glass tube with the product sitting inside ---------- */
+.jcap{
+  --c-glass1:rgba(176,116,78,.26); --c-glass2:rgba(112,62,36,.52);
+  --c-outline:#4A2616; --c-rim:rgba(255,228,204,.60); --c-wall:rgba(96,50,26,.30);
+  --c-glow:rgba(255,190,138,.45); --c-shadow:rgba(52,24,10,.50); --c-ink:#FFF1E4;
+  position:relative; isolation:isolate; display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+  box-sizing:border-box; aspect-ratio:1/2.25; border-radius:9999px; text-decoration:none; color:var(--c-ink); cursor:pointer;
+  padding:22px 9px 16px;
+  background-image:var(--sweep), radial-gradient(ellipse 75% 60% at 50% 45%, var(--c-glass1) 0, var(--c-glass2) 100%);
+  background-size:260% 100%, 100% 100%; background-repeat:no-repeat; background-position:var(--sweep-pos, -80% 0), 0 0;
+  -webkit-backdrop-filter:blur(10px) saturate(150%); backdrop-filter:blur(10px) saturate(150%);
+  border:2.5px solid var(--c-outline);
+  box-shadow:
+    inset 0 0 0 1.5px var(--c-rim),
+    inset 0 0 0 5px var(--c-wall),
+    inset 0 -16px 20px -12px var(--c-glow),
+    inset 0 10px 14px -10px rgba(0,0,0,.35),
+    0 16px 20px -8px var(--c-shadow),
+    0 4px 6px rgba(52,24,10,.25),
+    var(--hg, 0 0 0 0 transparent);
+  transition:transform .5s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease, filter .2s ease, background-position .75s ease;
+}
+/* thin bright arc along the top inside edge */
+.jcap::after{
+  content:""; position:absolute; z-index:3; left:16%; top:2.2%; width:68%; height:14%;
+  border-radius:9999px 9999px 40% 40%; border-top:2.5px solid rgba(255,255,255,.85);
+  background:linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 70%);
+  pointer-events:none;
+}
+/* faint reflection on the left wall */
+.jcap::before{
+  content:""; position:absolute; z-index:3; left:9%; top:16%; width:7%; height:46%; border-radius:9999px;
+  background:linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0));
+  pointer-events:none;
+}
+.jcap-win{
+  position:relative; z-index:2; display:flex; align-items:center; justify-content:center;
+  width:100%; flex:1; min-height:0; color:var(--c-ink);
+}
+.jcap-win img{
+  width:96%; height:auto; max-height:100%; object-fit:contain; display:block;
+  filter:drop-shadow(0 6px 6px rgba(40,16,6,.55)) drop-shadow(0 1px 1px rgba(0,0,0,.4));
+}
+.jcap-win svg{ filter:drop-shadow(0 2px 2px rgba(0,0,0,.4)); }
+.jcap-label{ position:relative; z-index:2; margin-top:8px; font-weight:700; font-size:13px; letter-spacing:.02em;
+  text-shadow:0 1px 2px rgba(0,0,0,.45); }
+.jcap:focus-visible{ outline:3px solid var(--accent); outline-offset:3px; }
+/* two-tone variant (like the brightness capsule): dark chocolate top, caramel bottom */
+.jcap.fill{
+  background-image:var(--sweep), linear-gradient(180deg, rgba(66,30,14,.92) 0, rgba(84,40,20,.9) 50%, rgba(170,104,66,.85) 50.5%, rgba(196,130,88,.85) 100%);
+}
+[data-theme="neu"] .jcap{
+  --c-glass1:rgba(70,78,92,.20); --c-glass2:rgba(14,16,22,.62);
+  --c-outline:#111318; --c-rim:rgba(200,215,255,.45); --c-wall:rgba(0,0,0,.25);
+  --c-glow:rgba(110,150,255,.40); --c-shadow:rgba(20,24,34,.40); --c-ink:#FFFFFF;
+}
+[data-theme="neu"] .jcap.fill{
+  background-image:var(--sweep), linear-gradient(180deg, rgba(8,9,12,.95) 0, rgba(24,27,34,.92) 50%, rgba(236,239,244,.9) 50.5%, #FFFFFF 100%);
+}
+[data-theme="neu"] .jcap.fill .jcap-label{ color:#14161B; text-shadow:0 1px 0 rgba(255,255,255,.7); }
+
+/* ---------- glass window: tinted chocolate glass box that holds a product photo (product cards) ---------- */
+.jwin{
+  --c-glass1:rgba(176,116,78,.22); --c-glass2:rgba(112,62,36,.45);
+  --c-outline:#4A2616; --c-rim:rgba(255,228,204,.60); --c-wall:rgba(96,50,26,.28); --c-glow:rgba(255,190,138,.40);
+  position:relative; isolation:isolate; overflow:hidden; box-sizing:border-box;
+  display:flex; align-items:center; justify-content:center; border-radius:26px;
+  background:radial-gradient(ellipse 75% 70% at 50% 45%, var(--c-glass1) 0, var(--c-glass2) 100%);
+  -webkit-backdrop-filter:blur(10px) saturate(150%); backdrop-filter:blur(10px) saturate(150%);
+  border:2.5px solid var(--c-outline);
+  box-shadow: inset 0 0 0 1.5px var(--c-rim), inset 0 0 0 5px var(--c-wall),
+    inset 0 -18px 24px -14px var(--c-glow), inset 0 10px 14px -10px rgba(0,0,0,.35);
+}
+.jwin::after{
+  content:""; position:absolute; z-index:3; left:8%; top:3%; width:84%; height:18%; pointer-events:none;
+  border-radius:20px 20px 50% 50%; border-top:2.5px solid rgba(255,255,255,.8);
+  background:linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0) 80%);
+}
+.jwin img{ position:relative; z-index:2; max-width:84%; max-height:84%; object-fit:contain;
+  filter:drop-shadow(0 8px 8px rgba(40,16,6,.5)); }
+.jwin img.cover{ max-width:none; max-height:none; width:100%; height:100%; object-fit:cover; filter:none; z-index:1; }
+[data-theme="neu"] .jwin{
+  --c-glass1:rgba(70,78,92,.16); --c-glass2:rgba(14,16,22,.55);
+  --c-outline:#111318; --c-rim:rgba(200,215,255,.45); --c-wall:rgba(0,0,0,.22); --c-glow:rgba(110,150,255,.35);
+}
+
+/* Phase-1 classes mapped onto the tile look (older markup still uses them) */
 .glass, .card{
   background:linear-gradient(160deg, var(--t-fill1) 0, var(--t-fill2) 100%) !important;
-  -webkit-backdrop-filter:blur(14px) saturate(140%); backdrop-filter:blur(14px) saturate(140%);
-  box-shadow: inset 0 0 0 1.5px var(--t-edge), inset 0 0 0 7px var(--t-inner), inset 0 0 0 8.5px rgba(255,255,255,.35),
-    0 22px 34px -14px var(--t-shadow), 0 6px 10px rgba(0,0,0,.06) !important;
-  border:0 !important;
+  -webkit-backdrop-filter:blur(18px) saturate(150%); backdrop-filter:blur(18px) saturate(150%);
+  border:1.5px solid var(--t-outline) !important;
+  box-shadow: inset 0 0 0 2px var(--t-inner), 0 22px 32px -14px var(--t-shadow) !important;
 }
 
 @media (max-width:640px){
-  .gtile, .glass, .card, .well{ -webkit-backdrop-filter:blur(8px) saturate(130%); backdrop-filter:blur(8px) saturate(130%); }
-  .gsheet{ display:none; }
+  .gtile, .glass, .card, .well{ -webkit-backdrop-filter:blur(10px) saturate(140%); backdrop-filter:blur(10px) saturate(140%); }
+  .jelly, .jpill{ -webkit-backdrop-filter:none; backdrop-filter:none; }
+  .gsheet, .gbubble{ -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+  .gsheet.hide-sm, .gbubble.hide-sm{ display:none; }
 }
 @media (prefers-reduced-motion: reduce){
-  .jelly, .jpill{ transition:none; }
-  .jelly.btn:hover, .jelly.btn:active, .jpill:hover, .jpill:active{ transform:none; }
+  .jelly, .jpill, .jcap{ transition:none; }
+  .jelly.btn:hover, .jelly.btn:active, .jpill:hover, .jpill:active, .jcap:hover, .jcap:active{ animation:none; transform:none; }
 }
-
-/* .alt = caramel in Chocolate, black in Milky (used for nav + secondary buttons) */
-.jpill.alt{ color:var(--j-inkL); background:linear-gradient(180deg, var(--j-coreL) 0, var(--j-coreL2) 100%); }
-[data-theme="neu"] .jpill.alt{ color:var(--j-ink); background:linear-gradient(180deg, var(--j-core) 0, var(--j-core2) 100%); }
-.jelly.alt{ color:var(--j-inkL);
-  background: radial-gradient(circle at 50% 42%, var(--j-coreL) 0, var(--j-coreL2) 52%, rgba(0,0,0,0) 53.5%),
-              linear-gradient(180deg, var(--j-rim) 0, var(--j-rim2) 100%); }
-[data-theme="neu"] .jelly.alt{ color:var(--j-ink);
-  background: radial-gradient(circle at 50% 42%, var(--j-core) 0, var(--j-core2) 52%, rgba(0,0,0,0) 53.5%),
-              linear-gradient(180deg, var(--j-rim) 0, var(--j-rim2) 100%); }
-
-/* scrolled navbar: thin frosted bar */
-.headerglass{
-  background:linear-gradient(180deg, var(--t-fill1), var(--t-fill2));
-  -webkit-backdrop-filter:blur(18px) saturate(150%); backdrop-filter:blur(18px) saturate(150%);
-  box-shadow: inset 0 -1.5px 0 var(--t-edge), 0 10px 24px -14px var(--t-shadow);
-}
-
 }
