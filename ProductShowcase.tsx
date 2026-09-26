@@ -58,6 +58,7 @@ function CategorySection({
     if (slug === 'laptops') finalImg = '/images/sky-laptop.jpg';
     else if (slug === 'cctv') finalImg = '/images/sky-cctv.jpg';
     else if (slug === 'gadgets') finalImg = '/images/sky-headphones.jpg';
+    else if (slug === 'mobiles') finalImg = '/images/sky-mobiles.jpg';
     else finalImg = '';
   }
 

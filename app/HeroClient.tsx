@@ -8,7 +8,7 @@ import { Check, ShieldCheck, Wrench, Store, Laptop, Smartphone, Cctv, Headphones
    A category without a thumb shows its icon instead. */
 const HERO_CATS = [
   { slug: "laptops", name: "Laptops", thumb: "/images/cutouts/laptops.png", icon: Laptop, fill: false },
-  { slug: "mobiles", name: "Mobiles", thumb: "", icon: Smartphone, fill: true },
+  { slug: "mobiles", name: "Mobiles", thumb: "/images/cutouts/mobiles.png", icon: Smartphone, fill: false },
   { slug: "cctv", name: "CCTV", thumb: "/images/cutouts/cctv.png", icon: Cctv, fill: false },
   { slug: "gadgets", name: "Gadgets", thumb: "/images/cutouts/gadgets.png", icon: Headphones, fill: false },
 ];
