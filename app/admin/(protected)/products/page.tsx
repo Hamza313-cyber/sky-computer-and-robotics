@@ -32,10 +32,11 @@ export default async function AdminProductsPage({
 
   return (
     <div>
-      <div className="mb-8 flex items-center justify-between border-b border-black/20 pb-4">
-        <h1 className="font-mono text-2xl uppercase tracking-widest text-ink">
-          Products
-        </h1>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[3px] text-label">Sky Admin</p>
+          <h1 className="font-display text-3xl md:text-4xl text-ink">Products</h1>
+        </div>
         <Link
           href="/admin/products/new"
           className="jpill h-11 px-5 text-sm"

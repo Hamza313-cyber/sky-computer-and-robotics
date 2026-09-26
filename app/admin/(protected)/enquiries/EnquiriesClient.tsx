@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Mail, Phone, Inbox } from "lucide-react";
 
 export default function EnquiriesClient({ initialEnquiries }: { initialEnquiries: any[] }) {
   const [enquiries, setEnquiries] = useState(initialEnquiries);
@@ -26,65 +27,87 @@ export default function EnquiriesClient({ initialEnquiries }: { initialEnquiries
     if (selected?.id === id) setSelected({ ...selected, status });
   };
 
+  const statusCls = (st: string) =>
+    st === "new" ? "jpill" : st === "closed" ? "jpill light" : "jpill alt";
+
   return (
     <div className="grid gap-6 md:grid-cols-3">
       {/* List */}
-      <div className="md:col-span-1 border border-black/20 bg-white/35 overflow-y-auto max-h-[80vh]">
-        {enquiries.length === 0 && <div className="p-6 text-muted font-mono text-xs">No enquiries.</div>}
-        {enquiries.map((e) => (
-          <div 
-            key={e.id}
-            onClick={() => setSelected(e)}
-            className={`p-4 border-b border-black/10 cursor-pointer transition-colors ${selected?.id === e.id ? "bg-accent/10 border-l-2 border-l-accent" : "hover:bg-accent/5"}`}
-          >
-            <div className="flex justify-between items-start mb-1">
-              <span className="font-bold text-sm text-ink">{e.name}</span>
-              <span className={`text-[10px] uppercase px-1.5 py-0.5 ${e.status === 'new' ? 'bg-accent/20 text-accent' : e.status === 'closed' ? 'bg-black/10 text-body' : 'bg-yellow-500/20 text-yellow-700'}`}>
-                {e.status}
-              </span>
-            </div>
-            <div className="text-xs text-body truncate">{e.subject}</div>
-            <div className="text-[10px] text-muted mt-2">{new Date(e.created_at).toLocaleDateString()}</div>
-          </div>
-        ))}
+      <div className="gtile md:col-span-1 max-h-[80vh] overflow-y-auto rounded-[28px] p-3">
+        {enquiries.length === 0 && <div className="p-6 text-center text-muted">No enquiries yet.</div>}
+        <ul className="space-y-2">
+          {enquiries.map((e) => (
+            <li key={e.id}>
+              <button
+                type="button"
+                onClick={() => setSelected(e)}
+                aria-pressed={selected?.id === e.id}
+                className={`w-full rounded-[20px] p-4 text-left transition-colors ${selected?.id === e.id ? "well" : "hover:bg-white/30"}`}
+              >
+                <div className="mb-1 flex items-start justify-between gap-2">
+                  <span className="text-sm font-bold text-ink">{e.name}</span>
+                  <span className={`${statusCls(e.status)} h-7 px-2.5 text-[11px] capitalize pointer-events-none`}>{e.status}</span>
+                </div>
+                <div className="truncate text-sm text-body">{e.subject}</div>
+                <div className="mt-2 text-xs text-muted">{new Date(e.created_at).toLocaleDateString("en-IN")}</div>
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Detail View */}
-      <div className="md:col-span-2 border border-black/20 bg-white/35 p-6">
+      <div className="gtile md:col-span-2 rounded-[28px] p-6">
         {selected ? (
           <div>
-            <div className="flex justify-between items-start mb-6 border-b border-black/20 pb-4">
+            <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-ink mb-1">{selected.subject}</h2>
-                <div className="text-xs font-mono text-body">
-                  From: <span className="text-accent">{selected.name}</span> ({selected.email})
+                <h2 className="mb-2 font-display text-2xl text-ink">{selected.subject}</h2>
+                <div className="text-sm text-body">
+                  From: <span className="font-bold text-ink">{selected.name}</span>
                 </div>
-                {selected.phone && <div className="text-xs font-mono text-body">Phone: {selected.phone}</div>}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {selected.email && (
+                    <a href={`mailto:${selected.email}`} className="jpill light h-9 px-3 text-xs gap-1.5">
+                      <Mail size={14} /> {selected.email}
+                    </a>
+                  )}
+                  {selected.phone && (
+                    <a href={`tel:${selected.phone}`} className="jpill light h-9 px-3 text-xs gap-1.5">
+                      <Phone size={14} /> {selected.phone}
+                    </a>
+                  )}
+                </div>
               </div>
-              <select 
-                value={selected.status} 
-                onChange={(e) => updateStatus(selected.id, e.target.value)}
-                className="bg-white/60 border border-black/20 text-xs font-mono text-accent px-2 py-1 outline-none"
-              >
-                <option value="new">NEW</option>
-                <option value="contacted">CONTACTED</option>
-                <option value="closed">CLOSED</option>
-              </select>
+              <div>
+                <label htmlFor="enquiry-status" className="mb-1.5 block text-xs font-bold uppercase tracking-[1.5px] text-label">Status</label>
+                <select
+                  id="enquiry-status"
+                  value={selected.status}
+                  onChange={(e) => updateStatus(selected.id, e.target.value)}
+                  className="well rounded-[16px] px-4 py-2 text-sm text-ink outline-none"
+                >
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </div>
             </div>
-            
+
             {selected.products && (
-              <div className="mb-6 p-4 border border-black/10 bg-accent/5 font-mono text-xs">
-                <span className="text-body">Related Product:</span> <span className="text-accent">{selected.products.name}</span>
+              <div className="well mb-6 rounded-[18px] p-4 text-sm">
+                <span className="text-body">Related product:</span> <span className="font-bold text-ink">{selected.products.name}</span>
               </div>
             )}
-            
-            <div className="whitespace-pre-wrap text-body font-sans leading-relaxed">
+
+            <div className="whitespace-pre-wrap leading-relaxed text-body">
               {selected.message}
             </div>
           </div>
         ) : (
-          <div className="h-full flex items-center justify-center text-muted font-mono text-xs">
-            Select an enquiry to view details
+          <div className="flex h-full min-h-[200px] flex-col items-center justify-center gap-3 text-center text-muted">
+            <span className="jelly alt w-14 h-14"><Inbox size={22} /></span>
+            Select an enquiry to read it
           </div>
         )}
       </div>

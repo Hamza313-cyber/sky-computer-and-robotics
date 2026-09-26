@@ -27,8 +27,11 @@ export default async function ProductEditPage({
 
   return (
     <div>
-      <h1 className="mb-6 font-mono text-xl uppercase tracking-widest text-accent">
-        {isNew ? "New Product" : `Edit Product: ${product?.name}`}
+      <p className="text-[11px] font-bold uppercase tracking-[3px] text-label">
+        {isNew ? "Add a product" : "Edit product"}
+      </p>
+      <h1 className="mb-6 font-display text-3xl md:text-4xl text-ink">
+        {isNew ? "New Product" : product?.name}
       </h1>
       
       <ProductFormClient 

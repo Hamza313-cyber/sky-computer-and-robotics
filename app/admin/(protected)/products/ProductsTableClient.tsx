@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import Image from "next/image";
+import { Search, Pencil, Trash2, Eye, EyeOff, ImageOff } from "lucide-react";
 
 export default function ProductsTableClient({
   initialProducts,
@@ -74,99 +75,141 @@ export default function ProductsTableClient({
     setProducts(products.filter((p) => p.id !== id));
   };
 
+  const thumb = (p: any, size: string) =>
+    p.images?.[0] ? (
+      <div className={`jwin relative ${size} shrink-0 overflow-hidden rounded-2xl`}>
+        <Image src={p.images[0]} alt="" fill sizes="64px" className="object-contain p-1" />
+      </div>
+    ) : (
+      <div className={`jwin ${size} shrink-0 rounded-2xl flex items-center justify-center text-muted`}>
+        <ImageOff size={18} />
+      </div>
+    );
+
+  const statusBtn = (p: any) => (
+    <button
+      onClick={() => toggleActive(p.id, p.is_active)}
+      aria-label={p.is_active ? "Active - click to hide" : "Hidden - click to show"}
+      className={`${p.is_active ? "jpill light" : "jpill alt"} h-9 px-3 text-xs gap-1.5`}
+    >
+      {p.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
+      {p.is_active ? "Active" : "Hidden"}
+    </button>
+  );
+
+  const actions = (p: any) => (
+    <div className="flex items-center gap-2">
+      <Link href={`/admin/products/${p.id}`} aria-label={`Edit ${p.name}`} className="jelly btn w-9 h-9">
+        <Pencil size={15} />
+      </Link>
+      <button onClick={() => deleteProduct(p.id)} aria-label={`Delete ${p.name}`} className="jelly alt btn w-9 h-9">
+        <Trash2 size={15} />
+      </button>
+    </div>
+  );
+
+  const stock = (p: any) => (
+    <span className={p.in_stock ? "text-ink" : "font-bold text-red-700"}>
+      {p.in_stock ? p.stock_qty : "Out of stock"}
+    </span>
+  );
+
+  const price = (v: any) =>
+    v != null && v !== "" ? "\u20B9" + Number(v).toLocaleString("en-IN") : "\u2014";
+
   return (
     <div>
-      <div className="mb-6 flex gap-4">
-        <form onSubmit={handleSearch} className="flex-1">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search products..."
-            className="w-full max-w-md rounded-none border border-black/20 bg-white/30 px-4 py-2 font-mono text-xs text-ink outline-none focus:border-accent"
-          />
-        </form>
-      </div>
+      <form onSubmit={handleSearch} className="mb-6 flex max-w-lg gap-3">
+        <label htmlFor="admin-product-search" className="sr-only">Search products</label>
+        <input
+          id="admin-product-search"
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search products..."
+          className="well h-12 flex-1 rounded-[20px] px-4 text-sm text-ink placeholder:text-muted outline-none"
+        />
+        <button type="submit" aria-label="Search" className="jelly btn w-12 h-12 shrink-0">
+          <Search size={18} />
+        </button>
+      </form>
 
-      <div className="overflow-x-auto border border-black/20 bg-white/35">
-        <table className="w-full text-left font-mono text-xs text-body">
-          <thead className="border-b border-black/20 bg-accent/5 text-accent">
-            <tr>
-              <th className="p-4 font-normal">Image</th>
-              <th className="p-4 font-normal">Name</th>
-              <th className="p-4 font-normal">Category</th>
-              <th className="p-4 font-normal">Price</th>
-              <th className="p-4 font-normal">Stock</th>
-              <th className="p-4 font-normal">Status</th>
-              <th className="p-4 font-normal text-right">Actions</th>
+      {/* Desktop table */}
+      <div className="gtile hidden md:block overflow-x-auto rounded-[28px] p-2">
+        <table className="w-full text-left text-sm text-body">
+          <thead>
+            <tr className="text-[11px] font-bold uppercase tracking-[1.5px] text-label">
+              <th className="p-4">Product</th>
+              <th className="p-4">Category</th>
+              <th className="p-4">Price</th>
+              <th className="p-4">Stock</th>
+              <th className="p-4">Status</th>
+              <th className="p-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-black/10">
             {products.map((p) => (
-              <tr key={p.id} className="hover:bg-black/5 transition-colors">
+              <tr key={p.id} className="transition-colors hover:bg-white/25">
                 <td className="p-4">
-                  {p.images?.[0] ? (
-                    <div className="relative h-10 w-10 overflow-hidden bg-white/30">
-                      <Image src={p.images[0]} alt="" fill className="object-contain" />
+                  <div className="flex items-center gap-3">
+                    {thumb(p, "h-14 w-14")}
+                    <div>
+                      <div className="font-bold text-ink">{p.name}</div>
+                      <div className="text-xs text-muted">{p.sku}</div>
                     </div>
-                  ) : (
-                    <div className="h-10 w-10 bg-black/10" />
-                  )}
-                </td>
-                <td className="p-4 text-ink">
-                  <div className="font-bold">{p.name}</div>
-                  <div className="text-[10px] text-muted">{p.sku}</div>
+                  </div>
                 </td>
                 <td className="p-4">{p.categories?.name}</td>
-                <td className="p-4">{p.price}</td>
-                <td className="p-4">
-                  <span className={p.in_stock ? "text-accent" : "text-red-700"}>
-                    {p.in_stock ? p.stock_qty : "Out"}
-                  </span>
-                </td>
-                <td className="p-4">
-                  <button
-                    onClick={() => toggleActive(p.id, p.is_active)}
-                    className={`px-2 py-1 text-[10px] uppercase tracking-widest ${
-                      p.is_active ? "bg-accent/20 text-accent" : "bg-red-500/10 text-red-700"
-                    }`}
-                  >
-                    {p.is_active ? "Active" : "Hidden"}
-                  </button>
-                </td>
-                <td className="p-4 text-right space-x-3">
-                  <Link href={`/admin/products/${p.id}`} className="text-accent hover:underline">
-                    Edit
-                  </Link>
-                  <button onClick={() => deleteProduct(p.id)} className="text-red-700 hover:underline">
-                    Delete
-                  </button>
-                </td>
+                <td className="p-4 font-bold text-ink">{price(p.price)}</td>
+                <td className="p-4">{stock(p)}</td>
+                <td className="p-4">{statusBtn(p)}</td>
+                <td className="p-4"><div className="flex justify-end">{actions(p)}</div></td>
               </tr>
             ))}
             {products.length === 0 && (
               <tr>
-                <td colSpan={7} className="p-8 text-center text-muted">
-                  No products found.
-                </td>
+                <td colSpan={6} className="p-8 text-center text-muted">No products found.</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <div className="mt-4 flex items-center justify-between font-mono text-xs text-muted">
+      {/* Phone cards */}
+      <div className="grid gap-3 md:hidden">
+        {products.map((p) => (
+          <div key={p.id} className="gtile rounded-[24px] p-4">
+            <div className="flex gap-3">
+              {thumb(p, "h-16 w-16")}
+              <div className="min-w-0 flex-1">
+                <div className="font-bold text-ink leading-snug">{p.name}</div>
+                <div className="text-xs text-muted">{p.sku} · {p.categories?.name}</div>
+                <div className="mt-1 text-sm"><span className="font-bold text-ink">{price(p.price)}</span> · Stock: {stock(p)}</div>
+              </div>
+            </div>
+            <div className="mt-3 flex items-center justify-between">
+              {statusBtn(p)}
+              {actions(p)}
+            </div>
+          </div>
+        ))}
+        {products.length === 0 && (
+          <div className="gtile rounded-[24px] p-8 text-center text-muted">No products found.</div>
+        )}
+      </div>
+
+      <div className="mt-5 flex items-center justify-between text-sm text-muted">
         <div>
           Showing {products.length} of {count}
         </div>
-        <div className="space-x-4">
+        <div className="flex gap-2">
           {page > 1 && (
-            <Link href={`/admin/products?page=${page - 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} className="text-accent hover:underline">
+            <Link href={`/admin/products?page=${page - 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} className="jpill alt h-10 px-4 text-sm">
               ← Prev
             </Link>
           )}
           {page * 20 < count && (
-            <Link href={`/admin/products?page=${page + 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} className="text-accent hover:underline">
+            <Link href={`/admin/products?page=${page + 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} className="jpill alt h-10 px-4 text-sm">
               Next →
             </Link>
           )}

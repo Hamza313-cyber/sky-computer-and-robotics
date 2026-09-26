@@ -333,50 +333,51 @@ export default function ImportPage() {
 
   return (
     <div>
-      <h1 className="mb-6 font-mono text-xl uppercase tracking-widest text-ink">
-        Bulk Import Products
+      <p className="text-[11px] font-bold uppercase tracking-[3px] text-label">Sky Admin</p>
+      <h1 className="mb-6 font-display text-3xl md:text-4xl text-ink">
+        Import Products (CSV)
       </h1>
 
-      <div className="border border-black/20 bg-white/35 p-6 mb-8">
+      <div className="gtile mb-8 rounded-[28px] p-6">
         <p className="mb-2 text-body">
           Upload a CSV file to bulk import products. category_slug and brand_slug must match
           existing slugs.
         </p>
-        <p className="mb-4 font-mono text-[11px] text-muted">
+        <p className="mb-5 text-sm text-muted">
           Re-uploading the same file updates those products instead of creating duplicates.
           Product photos are added through the product form, not the CSV.
         </p>
 
         <div className="flex flex-wrap items-center gap-4 mb-6">
-          <input type="file" accept=".csv" onChange={handleFileChange} className="text-ink" />
+          <input type="file" accept=".csv" onChange={handleFileChange} aria-label="Choose CSV file" className="text-sm text-body file:mr-3 file:cursor-pointer file:rounded-full file:border-0 file:bg-[var(--accent)] file:px-4 file:py-2 file:text-sm file:font-bold file:text-white" />
           <button
             onClick={handleParse}
             disabled={!file}
-            className="bg-accent/20 px-4 py-2 font-mono text-xs uppercase tracking-widest text-accent disabled:opacity-50"
+            className="jpill h-11 px-5 text-sm disabled:opacity-50"
           >
             Preview &amp; Validate
           </button>
           <button
             onClick={downloadSample}
-            className="border border-black/20 px-4 py-2 font-mono text-xs uppercase tracking-widest text-body"
+            className="jpill alt h-11 px-5 text-sm"
           >
             Download Sample CSV
           </button>
         </div>
 
         {errors.length > 0 && (
-          <div className="mb-6 border border-red-500/50 bg-red-500/10 p-4">
-            <h3 className="mb-2 font-mono text-xs uppercase text-red-700">
+          <div role="alert" className="mb-6 rounded-[20px] border border-red-500/40 bg-red-500/10 p-4">
+            <h3 className="mb-2 text-sm font-bold text-red-700">
               {errors.length} problem{errors.length === 1 ? "" : "s"} found — nothing has been
               imported
             </h3>
-            <ul className="list-disc pl-5 text-xs text-red-700/80 space-y-1">
+            <ul className="list-disc space-y-1 pl-5 text-sm text-red-700/90">
               {errors.slice(0, 15).map((e, idx) => (
                 <li key={idx}>{e}</li>
               ))}
               {errors.length > 15 && <li>...and {errors.length - 15} more.</li>}
             </ul>
-            <p className="mt-3 font-mono text-[10px] text-muted">
+            <p className="mt-3 text-xs text-muted">
               Line numbers match the row numbers in Excel.
             </p>
           </div>
@@ -384,11 +385,11 @@ export default function ImportPage() {
 
         {preview.length > 0 && errors.length === 0 && (
           <div className="mb-6">
-            <h3 className="mb-2 font-mono text-xs uppercase text-accent">
+            <h3 className="mb-2 text-sm font-bold text-ink">
               Preview — first {preview.length} row{preview.length === 1 ? "" : "s"}, exactly as they
               will be saved
             </h3>
-            <div className="overflow-x-auto text-xs text-body bg-white/30 border border-black/20 p-4">
+            <div className="well max-h-96 overflow-auto rounded-[20px] p-4 text-xs text-body">
               <pre>{JSON.stringify(preview, null, 2)}</pre>
             </div>
           </div>
@@ -407,19 +408,19 @@ export default function ImportPage() {
         )}
 
         {result && (
-          <div className="mt-6 border border-accent bg-accent/10 p-6">
-            <h3 className="mb-2 font-mono text-lg text-accent">Import Complete</h3>
-            <p className="text-body">Saved: {result.inserted}</p>
+          <div role="status" className="well mt-6 rounded-[24px] p-6">
+            <h3 className="mb-2 font-display text-xl text-ink">Import complete</h3>
+            <p className="font-bold text-ink">Saved: {result.inserted}</p>
             <p className={result.failed > 0 ? "text-red-700" : "text-muted"}>
               Skipped: {result.failed}
             </p>
 
             {result.rowErrors.length > 0 && (
               <div className="mt-4 border-t border-black/20 pt-4">
-                <h4 className="mb-2 font-mono text-xs uppercase text-red-700">
+                <h4 className="mb-2 text-sm font-bold text-red-700">
                   Rows that were skipped
                 </h4>
-                <ul className="list-disc pl-5 text-xs text-red-700/80 space-y-1 max-h-64 overflow-y-auto">
+                <ul className="max-h-64 list-disc space-y-1 overflow-y-auto pl-5 text-sm text-red-700/90">
                   {result.rowErrors.slice(0, 50).map((e, idx) => (
                     <li key={idx}>
                       {e.line > 0 ? `Line ${e.line}` : "File"}
@@ -430,7 +431,7 @@ export default function ImportPage() {
                     <li>...and {result.rowErrors.length - 50} more.</li>
                   )}
                 </ul>
-                <p className="mt-3 font-mono text-[10px] text-muted">
+                <p className="mt-3 text-xs text-muted">
                   Fix these rows in Excel and upload the file again — already-saved products will
                   simply be updated.
                 </p>

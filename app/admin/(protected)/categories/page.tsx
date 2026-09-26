@@ -9,7 +9,8 @@ export default async function AdminCategoriesPage() {
 
   return (
     <div>
-      <h1 className="mb-6 font-mono text-2xl uppercase tracking-widest text-ink">
+      <p className="text-[11px] font-bold uppercase tracking-[3px] text-label">Sky Admin</p>
+      <h1 className="mb-6 font-display text-3xl md:text-4xl text-ink">
         Categories
       </h1>
       <SimpleCrudClient table="categories" initialData={data || []} />
