@@ -8,6 +8,7 @@ const LOCAL: Record<string, string> = {
   laptops: "/images/sky-laptop.jpg",
   cctv: "/images/sky-cctv.jpg",
   gadgets: "/images/sky-headphones.jpg",
+  mobiles: "/images/sky-mobiles.jpg",
 };
 
 /* Icon for the "photo coming soon" tile, picked from the slug so new categories get a sensible icon. */
